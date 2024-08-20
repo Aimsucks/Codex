@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --------------------------------
+// Models for Auth.js
+// --------------------------------
+
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  isAdmin       Boolean      @default(false)
+  accounts      Account[]
+  sessions      Session[]
+  plugins       UserPlugin[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+// --------------------------------
+// Models for Codex
+// --------------------------------
+
+// model User {
+//   id        Int          @id @default(autoincrement())
+//   discordId String
+//   name      String?
+//   image     String?
+//   plugins   UserPlugin[]
+//   sessions  Session[]
+
+//   createdAt DateTime @default(now())
+// }
+
+model Plugin {
+  id          Int          @id @unique @default(autoincrement())
+  createdAt   DateTime?    @default(now())
+  user        UserPlugin[]
+  name        String
+  description String?
+  icon        String?
+  categories  Category[]
+}
+
+model Category {
+  id               Int        @id @unique @default(autoincrement())
+  plugin           Plugin     @relation(fields: [pluginId], references: [id])
+  parentCategory   Category?  @relation("parentCategory", fields: [parentCategoryId], references: [id])
+  parentCategoryId Int?
+  name             String
+  pluginId         Int
+  subcategories    Category[] @relation("parentCategory")
+  presets          Preset[]
+}
+
+model Preset {
+  id          Int       @id @unique @default(autoincrement())
+  category    Category  @relation(fields: [categoryId], references: [id])
+  name        String
+  description String?
+  version     Int
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
+  categoryId  Int
+}
+
+model UserPlugin {
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plugin   Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+  userId   String
+  pluginId Int
+
+  @@id([userId, pluginId])
+}
