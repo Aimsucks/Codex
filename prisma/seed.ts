@@ -136,6 +136,7 @@ async function main() {
       description: "Description for presetOne",
       version: 1,
       categoryId: subcategoryOne.id,
+      data: '{"name": "asdf"}',
     },
   });
 
@@ -152,6 +153,7 @@ async function main() {
       description: "Description for presetTwo",
       version: 1,
       categoryId: subcategoryOne.id,
+      data: '{"name": "asdf"}',
     },
   });
 
@@ -169,6 +171,7 @@ async function main() {
       description: "Description for presetThree",
       version: 1,
       categoryId: categoryTwoPluginOne.id,
+      data: '{"name": "asdf"}',
     },
   });
 
@@ -186,6 +189,7 @@ async function main() {
       description: "Description for presetOne",
       version: 1,
       categoryId: categoryOnePluginTwo.id,
+      data: '{"name": "asdf"}',
     },
   });
 
