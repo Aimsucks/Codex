@@ -106,7 +106,8 @@ model Preset {
   category    Category  @relation(fields: [categoryId], references: [id])
   name        String
   description String?
-  version     Int
+  version     Int       @default(1)
+  data        Json
   createdAt   DateTime? @default(now())
   updatedAt   DateTime? @updatedAt
   categoryId  Int
