@@ -9,7 +9,7 @@ const recursiveCategories: any = (level: number) => {
     return {
       select: {
         name: true,
-        subcategories: true,
+        subcategories: false,
         presets: {
           select: {
             id: true,
@@ -19,7 +19,13 @@ const recursiveCategories: any = (level: number) => {
             updatedAt: true,
             data: true,
           },
+          orderBy: {
+            name: "asc",
+          },
         },
+      },
+      orderBy: {
+        name: "asc",
       },
     };
   }
@@ -37,7 +43,13 @@ const recursiveCategories: any = (level: number) => {
           updatedAt: true,
           data: true,
         },
+        orderBy: {
+          name: "asc",
+        },
       },
+    },
+    orderBy: {
+      name: "asc",
     },
   };
 };
@@ -68,10 +80,16 @@ export async function GET(
               updatedAt: true,
               data: true,
             },
+            orderBy: {
+              name: "asc",
+            },
           },
         },
         where: {
           parentCategoryId: null,
+        },
+        orderBy: {
+          name: "asc",
         },
       },
     },
