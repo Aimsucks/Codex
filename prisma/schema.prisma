@@ -107,7 +107,7 @@ model Preset {
   name        String
   description String?
   version     Int       @default(1)
-  data        Json
+  data        String
   createdAt   DateTime? @default(now())
   updatedAt   DateTime? @updatedAt
   categoryId  Int
