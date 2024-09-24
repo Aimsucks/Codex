@@ -1,19 +1,77 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/prisma";
+import { Plugin } from "@prisma/client";
 
 export const dynamic = "force-static";
+
+const recursiveCategories: any = (level: number) => {
+  if (level === 0) {
+    return {
+      select: {
+        name: true,
+        subcategories: true,
+        presets: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            version: true,
+            updatedAt: true,
+            data: true,
+          },
+        },
+      },
+    };
+  }
+
+  return {
+    select: {
+      name: true,
+      subcategories: recursiveCategories(level - 1),
+      presets: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          version: true,
+          updatedAt: true,
+          data: true,
+        },
+      },
+    },
+  };
+};
 
 export async function GET(
   request: Request,
   { params }: { params: { name: string } }
 ) {
   // Find plugin by name, case insensitive
+  // Recursively goes down up to 3 subcategories (so category -> sub -> sub -> sub)
+  // TODO: Prevent creating categories past 3 subs
   const plugin = await prisma.plugin.findFirst({
     where: { name: { equals: params.name, mode: "insensitive" } },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      description: true,
       categories: {
-        include: {
-          presets: true,
+        select: {
+          name: true,
+          subcategories: recursiveCategories(2),
+          presets: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              version: true,
+              updatedAt: true,
+              data: true,
+            },
+          },
+        },
+        where: {
+          parentCategoryId: null,
         },
       },
     },
