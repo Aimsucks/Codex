@@ -1,214 +1,176 @@
-import { PrismaClient } from "@prisma/client";
+import {PrismaClient} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Upsert User One
-  const userOne = await prisma.user.upsert({
-    where: { name: "userOne" },
-    update: {},
-    create: {
-      name: "userOne",
-    },
-  });
 
-  // Upsert Plugin One
-  const pluginOne = await prisma.plugin.upsert({
-    where: { name: "pluginOne" },
-    update: {},
-    create: {
-      name: "pluginOne",
-      description: "Description for pluginOne",
-    },
-  });
+    /*
+    Users
+     */
 
-  // Upsert Plugin Two
-  const pluginTwo = await prisma.plugin.upsert({
-    where: { name: "pluginTwo" },
-    update: {},
-    create: {
-      name: "pluginTwo",
-      description: "Description for pluginTwo",
-    },
-  });
+    const user = await prisma.user.upsert({
+        where: {name: 'Aimsucks'},
+        update: {},
+        create: {
+            name: 'Aimsucks',
+            image: 'https://cdn.discordapp.com/avatars/111202303070969856/e9efe871a44408f944ae7ec418eed55f.png',
+            isAdmin: true,
+        },
+    });
 
-  // Insert UserPlugin relationship for userOne with pluginOne
-  await prisma.userPlugin.upsert({
-    where: {
-      userId_pluginId: {
-        userId: userOne.id,
-        pluginId: pluginOne.id,
-      },
-    },
-    update: {},
-    create: {
-      userId: userOne.id,
-      pluginId: pluginOne.id,
-    },
-  });
+    /*
+    Plugins
+     */
 
-  // Insert UserPlugin relationship for userOne with pluginTwo
-  await prisma.userPlugin.upsert({
-    where: {
-      userId_pluginId: {
-        userId: userOne.id,
-        pluginId: pluginTwo.id,
-      },
-    },
-    update: {},
-    create: {
-      userId: userOne.id,
-      pluginId: pluginTwo.id,
-    },
-  });
+    const plugin = await prisma.plugin.upsert({
+        where: {name: "Codex Example"},
+        update: {},
+        create: {
+            name: 'Codex Example',
+            description: 'Providing an example of interacting with a repository of presets for FFXIV plugins.',
+            icon: 'https://github.com/Aimsucks/CodexExample/blob/master/Assets/icon.png?raw=true',
+        },
+    });
 
-  // Upsert Categories for Plugin One
-  const categoryOnePluginOne = await prisma.category.upsert({
-    where: {
-      categoryIdentifier: {
-        pluginId: pluginOne.id,
-        name: "categoryOne",
-      },
-    },
-    update: {},
-    create: {
-      name: "categoryOne",
-      pluginId: pluginOne.id,
-    },
-  });
+    /*
+    Users - Plugins
+     */
 
-  const categoryTwoPluginOne = await prisma.category.upsert({
-    where: {
-      categoryIdentifier: {
-        pluginId: pluginOne.id,
-        name: "categoryTwo",
-      },
-    },
-    update: {},
-    create: {
-      name: "categoryTwo",
-      pluginId: pluginOne.id,
-    },
-  });
+    await prisma.userPlugin.upsert({
+        where: {
+            userId_pluginId: {
+                userId: user.id,
+                pluginId: plugin.id,
+            },
+        },
+        update: {},
+        create: {
+            userId: user.id,
+            pluginId: plugin.id,
+        },
+    });
 
-  // Upsert Subcategory for Category One of Plugin One
-  const subcategoryOne = await prisma.category.upsert({
-    where: {
-      categoryIdentifier: {
-        pluginId: pluginOne.id,
-        name: "subcategoryOne",
-      },
-    },
-    update: {},
-    create: {
-      name: "subcategoryOne",
-      parentCategoryId: categoryOnePluginOne.id,
-      pluginId: pluginOne.id,
-    },
-  });
+    /*
+    Categories
+     */
 
-  // Upsert Categories for Plugin Two
-  const categoryOnePluginTwo = await prisma.category.upsert({
-    where: {
-      categoryIdentifier: {
-        pluginId: pluginTwo.id,
-        name: "categoryOne",
-      },
-    },
-    update: {},
-    create: {
-      name: "categoryOne",
-      pluginId: pluginTwo.id,
-    },
-  });
+    const configCategory = await prisma.category.upsert({
+        where: {categoryIdentifier: {pluginId: plugin.id, name: "Configuration Presets"}},
+        update: {},
+        create: {
+            name: 'Configuration Presets',
+            pluginId: plugin.id
+        },
+    });
 
-  // Upsert Presets for Plugin One - Category One - Subcategory One
-  await prisma.preset.upsert({
-    where: {
-      presetIdentifier: {
-        categoryId: subcategoryOne.id,
-        name: "presetOne",
-      },
-    },
-    update: {},
-    create: {
-      name: "presetOne",
-      description: "Description for presetOne",
-      version: 1,
-      categoryId: subcategoryOne.id,
-      data: '{"name": "asdf"}',
-    },
-  });
+    const pluginCategory = await prisma.category.upsert({
+        where: {categoryIdentifier: {pluginId: plugin.id, name: "Plugin Presets"}},
+        update: {},
+        create: {
+            name: 'Plugin Presets',
+            pluginId: plugin.id
+        },
+    });
 
-  await prisma.preset.upsert({
-    where: {
-      presetIdentifier: {
-        categoryId: subcategoryOne.id,
-        name: "presetTwo",
-      },
-    },
-    update: {},
-    create: {
-      name: "presetTwo",
-      description: "Description for presetTwo",
-      version: 1,
-      categoryId: subcategoryOne.id,
-      data: '{"name": "asdf"}',
-    },
-  });
+    const interfaceCategory = await prisma.category.upsert({
+        where: {categoryIdentifier: {pluginId: plugin.id, name: "Interface Presets"}},
+        update: {},
+        create: {
+            name: 'Interface Presets',
+            pluginId: plugin.id,
+            parentCategoryId: pluginCategory.id,
+        },
+    });
 
-  // Upsert Presets for Plugin One - Category Two
-  await prisma.preset.upsert({
-    where: {
-      presetIdentifier: {
-        categoryId: categoryTwoPluginOne.id,
-        name: "presetThree",
-      },
-    },
-    update: {},
-    create: {
-      name: "presetThree",
-      description: "Description for presetThree",
-      version: 1,
-      categoryId: categoryTwoPluginOne.id,
-      data: '{"name": "asdf"}',
-    },
-  });
+    const moduleCategory = await prisma.category.upsert({
+        where: {categoryIdentifier: {pluginId: plugin.id, name: "Module Presets"}},
+        update: {},
+        create: {
+            name: 'Module Presets',
+            pluginId: plugin.id,
+            parentCategoryId: pluginCategory.id,
+        },
+    });
 
-  // Upsert Presets for Plugin Two - Category One
-  await prisma.preset.upsert({
-    where: {
-      presetIdentifier: {
-        categoryId: categoryOnePluginTwo.id,
-        name: "presetOne",
-      },
-    },
-    update: {},
-    create: {
-      name: "presetOne",
-      description: "Description for presetOne",
-      version: 1,
-      categoryId: categoryOnePluginTwo.id,
-      data: '{"name": "asdf"}',
-    },
-  });
+    /*
+    Presets
+     */
 
-  console.log({
-    pluginOne,
-    pluginTwo,
-    categoryOnePluginOne,
-    categoryTwoPluginOne,
-    subcategoryOne,
-    categoryOnePluginTwo,
-  });
+    await prisma.preset.upsert({
+        where: { presetIdentifier: {categoryId: configCategory.id, name: 'True / 30'} },
+        update: {},
+        create: {
+            name: 'True / 30',
+            description: 'Changes Setting 1 to True and Setting 2 to 30.',
+            version: 1,
+            categoryId: configCategory.id,
+            data: '{"SettingOne": true, "SettingTwo": 30}',
+        },
+    });
+
+    await prisma.preset.upsert({
+        where: { presetIdentifier: {categoryId: configCategory.id, name: 'False / 20'} },
+        update: {},
+        create: {
+            name: 'False / 20',
+            description: 'Changes Setting 1 to False and Setting 2 to 20.',
+            version: 1,
+            categoryId: configCategory.id,
+            data: '{"SettingOne": false, "SettingTwo": 20}',
+        },
+    });
+
+    await prisma.preset.upsert({
+        where: { presetIdentifier: {categoryId: pluginCategory.id, name: 'General Preset'} },
+        update: {},
+        create: {
+            name: 'General Preset',
+            version: 1,
+            categoryId: pluginCategory.id,
+            data: '{"Name": "General Preset", "StringData": "String Data 3", "IntData": 30}',
+        },
+    });
+
+    await prisma.preset.upsert({
+        where: { presetIdentifier: {categoryId: interfaceCategory.id, name: 'Int. Preset 1'} },
+        update: {},
+        create: {
+            name: 'Int. Preset 1',
+            version: 1,
+            categoryId: interfaceCategory.id,
+            data: '{"Name": "Int. Preset 1", "StringData": "String Data 1", "IntData": 10}',
+        },
+    });
+
+    await prisma.preset.upsert({
+        where: { presetIdentifier: {categoryId: interfaceCategory.id, name: 'Int. Preset 2'} },
+        update: {},
+        create: {
+            name: 'Int. Preset 2',
+            version: 1,
+            categoryId: interfaceCategory.id,
+            data: '{"Name": "Int. Preset 2", "StringData": "String Data 2", "IntData": 20}',
+        },
+    });
+
+    await prisma.preset.upsert({
+        where: { presetIdentifier: {categoryId: moduleCategory.id, name: 'Mod. Preset'} },
+        update: {},
+        create: {
+            name: 'Mod. Preset',
+            version: 2,
+            categoryId: moduleCategory.id,
+            data: '{"Name": "Mod. Preset", "StringData": "String Data 4", "IntData": 40}',
+        },
+    });
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+    .then(async () => {
+        await prisma.$disconnect();
+    })
+    .catch(async (e) => {
+        console.error(e);
+        await prisma.$disconnect();
+        process.exit(1);
+    });
