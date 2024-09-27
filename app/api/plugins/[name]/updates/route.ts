@@ -19,7 +19,9 @@ export async function GET(request: NextRequest) {
             id: true,
             name: true,
             version: true,
-            updatedAt: true
+            updatedAt: true,
+            description: true,
+            data: true
         }
     })
 
