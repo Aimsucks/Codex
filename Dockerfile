@@ -20,7 +20,7 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-copy --from=builder /app /app
+COPY --from=builder /app /app
 
 EXPOSE 3000
 
