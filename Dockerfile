@@ -1,29 +1,9 @@
 FROM node:20-alpine
-
 RUN npm install -g pnpm
-
 WORKDIR /app
-
 COPY package.json pnpm-lock.yaml ./
-
 RUN pnpm install --frozen-lockfile
-
 COPY . .
-
 RUN npx prisma generate
-
 RUN pnpm run build
-
 CMD ["pnpm", "run", "start"]
-
-#FROM node:18-alpine
-
-#WORKDIR /app
-
-#COPY --from=builder /app /app
-
-#EXPOSE 3000
-
-#RUN ["npm", "run", "build"]
-
-#CMD ["npm", "run", "start"]
