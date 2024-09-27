@@ -13,7 +13,7 @@ services:
     networks: [internal]
 
   codex:
-    image: ghcr.io/aimsucks/codex:master
+    image: ghcr.io/aimsucks/codex:latest
     container_name: codex
     restart: unless-stopped
     environment:
