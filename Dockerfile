@@ -14,14 +14,16 @@ RUN npx prisma generate
 
 RUN pnpm run build
 
-FROM node:18-alpine
+RUN pnpm run start
 
-WORKDIR /app
+#FROM node:18-alpine
 
-COPY --from=builder /app /app
+#WORKDIR /app
 
-EXPOSE 3000
+#COPY --from=builder /app /app
 
-RUN ["npm", "run", "build"]
+#EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+#RUN ["npm", "run", "build"]
+
+#CMD ["npm", "run", "start"]
