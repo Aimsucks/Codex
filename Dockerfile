@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+FROM node:20-alpine
 
 RUN npm install -g pnpm
 
@@ -14,7 +14,7 @@ RUN npx prisma generate
 
 RUN pnpm run build
 
-RUN pnpm run start
+CMD ["pnpm", "run", "start"]
 
 #FROM node:18-alpine
 
