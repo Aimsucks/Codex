@@ -5,8 +5,6 @@ export async function GET(request: NextRequest) {
     const searchParams: URLSearchParams = request.nextUrl.searchParams
     const query: string | null = searchParams.get("query")
 
-    console.log(query)
-
     if (!query) {
         return NextResponse.json({message: "No query parameters provided."}, {status: 400})
     }
