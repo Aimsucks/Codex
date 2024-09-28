@@ -30,7 +30,7 @@ services:
       traefik.http.routers.codex.rule: Host(`${CODEX_URL}`)
       traefik.http.routers.codex.entrypoints: websecure
       traefik.http.routers.codex.tls: true
-      traefik.http.routers.codex.tls.certresolver: letencrypt
+      traefik.http.routers.codex.tls.certresolver: letsencrypt
       traefik.http.services.codex.loadbalancer.server.port: 3000
 
 volumes:
