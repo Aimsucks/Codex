@@ -3,10 +3,10 @@ import {prisma} from "@/prisma";
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { name: string } }
+    {params}: { params: { name: string } }
 ) {
     const plugin = await prisma.plugin.findFirst({
-        where: { name: { equals: params.name, mode: "insensitive" } },
+        where: {name: {equals: params.name, mode: "insensitive"}},
         select: {
             id: true,
             name: true,
@@ -15,8 +15,8 @@ export async function GET(
     });
 
     // Return entirety of plugin data if the plugin exists
-    if (plugin) return NextResponse.json(plugin, { status: 200 });
+    if (plugin) return NextResponse.json(plugin, {status: 200});
 
     // Return 404 if no plugin was found by the provided name
-    return NextResponse.json({ message: "Plugin not found." }, { status: 404 });
+    return NextResponse.json({message: "Plugin not found."}, {status: 404});
 }

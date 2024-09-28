@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    networks: [internal]
+    networks: [ internal ]
 
   codex:
     image: ghcr.io/aimsucks/codex:latest
@@ -23,8 +23,8 @@ services:
       AUTH_SECRET: ${AUTH_SECRET}
       AUTH_DISCORD_ID: ${AUTH_DISCORD_ID}
       AUTH_DISCORD_SECRET: ${AUTH_DISCORD_SECRET}
-    depends_on: [postgres]
-    networks: [proxy, internal]
+    depends_on: [ postgres ]
+    networks: [ proxy, internal ]
     labels:
       traefik.enable: true
       traefik.http.routers.codex.rule: Host(`${CODEX_URL}`)

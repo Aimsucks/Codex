@@ -97,7 +97,7 @@ async function main() {
      */
 
     await prisma.preset.upsert({
-        where: { presetIdentifier: {categoryId: configCategory.id, name: 'True / 30'} },
+        where: {presetIdentifier: {categoryId: configCategory.id, name: 'True / 30'}},
         update: {},
         create: {
             name: 'True / 30',
@@ -109,7 +109,7 @@ async function main() {
     });
 
     await prisma.preset.upsert({
-        where: { presetIdentifier: {categoryId: configCategory.id, name: 'False / 20'} },
+        where: {presetIdentifier: {categoryId: configCategory.id, name: 'False / 20'}},
         update: {},
         create: {
             name: 'False / 20',
@@ -121,7 +121,7 @@ async function main() {
     });
 
     await prisma.preset.upsert({
-        where: { presetIdentifier: {categoryId: pluginCategory.id, name: 'General Preset'} },
+        where: {presetIdentifier: {categoryId: pluginCategory.id, name: 'General Preset'}},
         update: {},
         create: {
             name: 'General Preset',
@@ -132,7 +132,7 @@ async function main() {
     });
 
     await prisma.preset.upsert({
-        where: { presetIdentifier: {categoryId: interfaceCategory.id, name: 'Int. Preset 1'} },
+        where: {presetIdentifier: {categoryId: interfaceCategory.id, name: 'Int. Preset 1'}},
         update: {},
         create: {
             name: 'Int. Preset 1',
@@ -143,7 +143,7 @@ async function main() {
     });
 
     await prisma.preset.upsert({
-        where: { presetIdentifier: {categoryId: interfaceCategory.id, name: 'Int. Preset 2'} },
+        where: {presetIdentifier: {categoryId: interfaceCategory.id, name: 'Int. Preset 2'}},
         update: {},
         create: {
             name: 'Int. Preset 2',
@@ -154,7 +154,7 @@ async function main() {
     });
 
     await prisma.preset.upsert({
-        where: { presetIdentifier: {categoryId: moduleCategory.id, name: 'Mod. Preset'} },
+        where: {presetIdentifier: {categoryId: moduleCategory.id, name: 'Mod. Preset'}},
         update: {},
         create: {
             name: 'Mod. Preset',
