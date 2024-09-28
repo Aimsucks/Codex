@@ -1,5 +1,5 @@
 import SignIn from "@/components/auth/SignIn";
-import {auth} from "../auth";
+import {auth} from "@/auth";
 import SignOut from "@/components/auth/SignOut";
 
 export default async function Home() {
