@@ -6,7 +6,7 @@ export async function GET(
     {params}: { params: { name: string } }
 ) {
     const plugin = await prisma.plugin.findFirst({
-        where: {name: {equals: params.name, mode: "insensitive"}},
+        where: {name: {equals: decodeURI(params.name), mode: "insensitive"}},
         select: {
             id: true,
             name: true,

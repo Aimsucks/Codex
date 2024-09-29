@@ -1,6 +1,8 @@
 import {NextRequest, NextResponse} from "next/server";
 import {prisma} from "@/prisma";
 
+// TODO: Add plugin name checking
+
 export async function GET(request: NextRequest) {
     const searchParams: URLSearchParams = request.nextUrl.searchParams
     const query: string | null = searchParams.get("query")

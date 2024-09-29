@@ -62,7 +62,7 @@ export async function GET(
         where: {
             plugin: {
                 name: {
-                    equals: params.name,
+                    equals: decodeURI(params.name),
                     mode: "insensitive"
                 }
             },
