@@ -24,6 +24,20 @@ const config = {
                 sans: ["var(--font-sans)", ...fontFamily.sans],
             },
             colors: {
+                codex: "#87AC66",
+                "punish": {
+                    50: "#E8E8E8",
+                    100: "#DEDEDE",
+                    200: "#C7C7C7",
+                    300: "#B0B0B0",
+                    400: "#999999",
+                    500: "#828282",
+                    600: "#6B6B6B",
+                    700: "#545454",
+                    800: "#3D3D3D",
+                    900: "#262626",
+                    950: "#1A1A1A"
+                },
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
                 ring: "hsl(var(--ring))",
