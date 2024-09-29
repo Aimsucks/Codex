@@ -1,9 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {prisma} from "@/prisma";
 
-// TODO: Add plugin name checking
-
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest, {params}: { params: { name: string } }) {
     const searchParams: URLSearchParams = request.nextUrl.searchParams
     const query: string | null = searchParams.get("query")
 
@@ -14,7 +12,10 @@ export async function GET(request: NextRequest) {
     const ids: number[] = query.split(",").map(id => parseInt(id))
 
     const presets = await prisma.preset.findMany({
-        where: {id: {in: ids}},
+        where: {
+            id: {in: ids},
+            plugin: {name: {equals: decodeURI(params.name), mode: "insensitive"}}
+        },
         select: {
             id: true,
             name: true,
