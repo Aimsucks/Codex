@@ -29,6 +29,8 @@ async function main() {
             name: 'Codex Example',
             description: 'Providing an example of interacting with a repository of presets for FFXIV home.',
             icon: 'https://github.com/Aimsucks/CodexExample/blob/master/Assets/icon.png?raw=true',
+            discordLink: "https://discord.gg/mm24u9qN3E",
+            githubLink: "https://github.com/aimsucks/codex"
         },
     });
 
