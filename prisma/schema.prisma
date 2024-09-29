@@ -67,17 +67,6 @@ model Account {
 // Models for Codex
 // --------------------------------
 
-// model User {
-//   id        Int          @id @default(autoincrement())
-//   discordId String
-//   name      String?
-//   image     String?
-//   plugins   UserPlugin[]
-//   sessions  Session[]
-
-//   createdAt DateTime @default(now())
-// }
-
 model Plugin {
   id          Int          @id @unique @default(autoincrement())
   createdAt   DateTime?    @default(now())
@@ -86,6 +75,7 @@ model Plugin {
   description String?
   icon        String?
   categories  Category[]
+  presets     Preset[]
 }
 
 model Category {
@@ -104,6 +94,7 @@ model Category {
 model Preset {
   id          Int       @id @unique @default(autoincrement())
   category    Category  @relation(fields: [categoryId], references: [id])
+  plugin      Plugin    @relation(fields: [pluginId], references: [id])
   name        String
   description String?
   version     Int       @default(1)
@@ -111,6 +102,7 @@ model Preset {
   createdAt   DateTime? @default(now())
   updatedAt   DateTime? @updatedAt
   categoryId  Int
+  pluginId    Int
 
   @@unique([categoryId, name], name: "presetIdentifier")
 }

@@ -27,7 +27,7 @@ async function main() {
         update: {},
         create: {
             name: 'Codex Example',
-            description: 'Providing an example of interacting with a repository of presets for FFXIV plugins.',
+            description: 'Providing an example of interacting with a repository of presets for FFXIV home.',
             icon: 'https://github.com/Aimsucks/CodexExample/blob/master/Assets/icon.png?raw=true',
         },
     });
@@ -104,6 +104,7 @@ async function main() {
             description: 'Changes Setting 1 to True and Setting 2 to 30.',
             version: 1,
             categoryId: configCategory.id,
+            pluginId: plugin.id,
             data: '{"SettingOne": true, "SettingTwo": 30}',
         },
     });
@@ -116,6 +117,7 @@ async function main() {
             description: 'Changes Setting 1 to False and Setting 2 to 20.',
             version: 1,
             categoryId: configCategory.id,
+            pluginId: plugin.id,
             data: '{"SettingOne": false, "SettingTwo": 20}',
         },
     });
@@ -127,6 +129,7 @@ async function main() {
             name: 'General Preset',
             version: 1,
             categoryId: pluginCategory.id,
+            pluginId: plugin.id,
             data: '{"Name": "General Preset", "StringData": "String Data 3", "IntData": 30}',
         },
     });
@@ -138,6 +141,7 @@ async function main() {
             name: 'Int. Preset 1',
             version: 1,
             categoryId: interfaceCategory.id,
+            pluginId: plugin.id,
             data: '{"Name": "Int. Preset 1", "StringData": "String Data 1", "IntData": 10}',
         },
     });
@@ -149,6 +153,7 @@ async function main() {
             name: 'Int. Preset 2',
             version: 1,
             categoryId: interfaceCategory.id,
+            pluginId: plugin.id,
             data: '{"Name": "Int. Preset 2", "StringData": "String Data 2", "IntData": 20}',
         },
     });
@@ -160,6 +165,7 @@ async function main() {
             name: 'Mod. Preset',
             version: 2,
             categoryId: moduleCategory.id,
+            pluginId: plugin.id,
             data: '{"Name": "Mod. Preset", "StringData": "String Data 4", "IntData": 40}',
         },
     });
