@@ -2,16 +2,13 @@ import {NextRequest, NextResponse} from "next/server";
 import {prisma} from "@/prisma";
 import {Plugin} from "@prisma/client"
 
-export async function GET(request: NextRequest, {params}: { params: { name: string } }) {
-    const name: string = decodeURI(params.name)
+export async function GET(request: NextRequest, {params}: { params: { slug: string } }) {
+    const pluginId: number | string = parseInt(params.slug) || decodeURI(params.slug)
 
     const plugin: Plugin | null = await prisma.plugin.findFirst({
-        where: {
-            name: {
-                equals: name,
-                mode: "insensitive"
-            }
-        },
+        where: typeof pluginId === "number" ?
+            {id: pluginId} :
+            {name: {equals: pluginId, mode: "insensitive"}},
         include: {
             categories: {
                 include: {
@@ -19,7 +16,6 @@ export async function GET(request: NextRequest, {params}: { params: { name: stri
                     subcategories: recursiveCategories(2)
                 },
                 where: {parentCategoryId: null},
-                orderBy: {name: "asc"}
             },
             presets: true
         }
@@ -27,7 +23,7 @@ export async function GET(request: NextRequest, {params}: { params: { name: stri
 
     if (plugin) return NextResponse.json(plugin, {status: 200});
 
-    return NextResponse.json({message: `Plugin ${name} not found`}, {status: 404});
+    return NextResponse.json({message: `Plugin not found`}, {status: 404});
 }
 
 const recursiveCategories: any = (level: number) => {
@@ -35,12 +31,8 @@ const recursiveCategories: any = (level: number) => {
         return {
             include: {
                 subcategories: false,
-                presets: {
-                    include: true,
-                    orderBy: {name: "asc",},
-                },
-            },
-            orderBy: {name: "asc",},
+                presets: {include: true},
+            }
         };
     }
 
@@ -51,7 +43,6 @@ const recursiveCategories: any = (level: number) => {
                 include: true,
                 orderBy: {name: "asc",},
             },
-        },
-        orderBy: {name: "asc",},
+        }
     };
 };
