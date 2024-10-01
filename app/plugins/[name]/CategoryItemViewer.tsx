@@ -1,6 +1,6 @@
 import {Category, Preset} from "@prisma/client"
 import PresetItemViewer from "@/app/plugins/[name]/PresetItemViewer";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Input} from "@/components/ui/input";
 import {usePluginContext} from "@/app/plugins/[name]/PluginContext";
 import ConfirmDelete from "@/components/shared/buttons/ConfirmDelete";
@@ -11,26 +11,27 @@ import Save from "@/components/shared/buttons/Save";
 import {Separator} from "@/components/ui/separator";
 
 type CategoryViewerProps = {
-    category: Category & {
-        presets?: Preset[]
-    };
+    category: Category & { presets?: Preset[] };
 };
 
 export default function CategoryItemViewer({category}: CategoryViewerProps) {
-    const {updateCategory, deleteCategory} = usePluginContext()
+    const {updateCategory, deleteCategory, createPreset, deletePreset} = usePluginContext()
     const [isEditing, setIsEditing] = useState(false);
     const [categoryName, setCategoryName] = useState(category.name);
     const [newPresets, setNewPresets] = useState<Preset[]>([]);
 
-    // useEffect(() => {
-    //     setNewPresets([])
-    // })
+    // Reset newPresets whenever the category prop changes
+    useEffect(() => {
+        setNewPresets([]);
+        setIsEditing(false);
+        setCategoryName(category.name)
+    }, [category.name, category.id]);
 
     // Handle saving the updated category name
-    const handleSave = async () => {
+    const handleSaveCategory = async () => {
         try {
-            await updateCategory(category.id, {name: categoryName});
-            category.name = categoryName
+            const updatedCategory = await updateCategory(category.id, {name: categoryName});
+            category.name = updatedCategory.name
             setIsEditing(false);
         } catch (error) {
             console.error('Error updating category:', error);
@@ -38,13 +39,13 @@ export default function CategoryItemViewer({category}: CategoryViewerProps) {
     };
 
     // Handle canceling the edit
-    const handleCancel = () => {
+    const handleCancelCategory = () => {
         setCategoryName(category.name); // Revert to original name
         setIsEditing(false);
     };
 
     // Handle adding a new preset
-    const handleAdd = () => {
+    const handleAddPreset = () => {
         const newPreset = {
             id: Date.now(), // Use a temporary ID for the new preset
             version: 1,
@@ -58,19 +59,43 @@ export default function CategoryItemViewer({category}: CategoryViewerProps) {
         };
         setNewPresets([newPreset, ...newPresets]); // Add the new preset at the top
     }
+    // Handle saving a new preset
+    const handleSavePreset = async (id: number, data: Partial<Preset>) => {
+        const createdPreset = await createPreset({
+            name: data.name,
+            version: 1,
+            description: data.description,
+            data: data.data,
+            categoryId: category.id,
+            pluginId: category.pluginId
+        });
+        category.presets?.unshift(createdPreset)
+        setNewPresets(newPresets.filter(preset => preset.id !== id));
+    }
 
     // Handle canceling a new preset
-    const handleCancelNewPreset = (id: number) => {
+    const handleCancelPreset = (id: number) => {
         setNewPresets(newPresets.filter(preset => preset.id !== id)); // Remove from list
     };
 
-    const handleDelete = async () => {
+    // Handle deleting a category
+    const handleDeleteCategory = async () => {
         try {
             await deleteCategory(category.id);
-            category.name = categoryName
             setIsEditing(false);
         } catch (error) {
             console.error('Error deleting category:', error);
+        }
+    }
+
+    // Handle deleting a preset
+    const handleDeletePreset = async (id: number) => {
+        try {
+            await deletePreset(id);
+
+            category.presets = category.presets?.filter(preset => preset.id !== id)
+        } catch (error) {
+            console.error('Error deleting preset:', error);
         }
     }
 
@@ -94,45 +119,47 @@ export default function CategoryItemViewer({category}: CategoryViewerProps) {
                 <div className="flex space-x-2 ml-auto bg-punish-900 rounded">
                     {isEditing ? (
                         <>
-                            <Save onClick={handleSave}/>
-                            <Cancel onClick={handleCancel}/>
+                            <Save onClick={handleSaveCategory}/>
+                            <Cancel onClick={handleCancelCategory}/>
                         </>
                     ) : (
                         <>
+                            <Add type="preset" onClick={handleAddPreset}/>
                             <Edit onClick={() => setIsEditing(true)}/>
-                            <Add onClick={handleAdd}/>
-                            <ConfirmDelete onClick={handleDelete} canDelete={category.presets?.length == 0}/>
+                            <ConfirmDelete onClick={handleDeleteCategory} canDelete={category.presets?.length == 0}/>
                         </>
                     )}
                 </div>
             </div>
 
-            {/* Render new presets first */}
+            {/* Display new presets first */}
             {newPresets.length > 0 && (
                 <div className="space-y-3">
                     {newPresets.map((preset) => (
-                        <>
-                            <Separator className="bg-punish-700"/>
+                        <div key={preset.id}>
+                            <Separator className="bg-punish-700 mb-3"/>
                             <PresetItemViewer
                                 preset={preset}
                                 newPreset={true}
-                                onCancel={() => handleCancelNewPreset(preset.id)}
+                                onSaveNew={(data: Partial<Preset>) => handleSavePreset(preset.id, data)}
+                                onCancel={() => handleCancelPreset(preset.id)}
                             />
-                        </>
+                        </div>
                     ))}
                 </div>
             )}
 
+            {/* Display rest of presets */}
             {category.presets?.length ? (
                 <div className="space-y-3">
                     {category.presets?.map((preset: Preset) => (
-                        <>
-                            <Separator className={`bg-punish-700 ${newPresets.length ? "mt-3" : ""}`}/>
+                        <div key={preset.id}>
+                            <Separator className={`bg-punish-700 ${newPresets.length ? "mt-3" : ""} mb-3`}/>
                             <PresetItemViewer
-                                key={preset.id}
                                 preset={preset}
+                                onDelete={() => handleDeletePreset(preset.id)}
                             />
-                        </>
+                        </div>
                     ))}
                 </div>
             ) : (

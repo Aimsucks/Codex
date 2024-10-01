@@ -2,41 +2,66 @@ import {Preset} from "@prisma/client"
 import {useFormatter} from "next-intl";
 import {Badge} from "@/components/ui/badge"
 import {Textarea} from "@/components/ui/textarea";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Input} from "@/components/ui/input";
 import Edit from "@/components/shared/buttons/Edit";
 import Save from "@/components/shared/buttons/Save";
 import Cancel from "@/components/shared/buttons/Cancel";
 import ConfirmDelete from "@/components/shared/buttons/ConfirmDelete";
 import {usePluginContext} from "@/app/plugins/[name]/PluginContext";
+import Copy from "@/components/shared/buttons/Copy";
 
 type PresetViewerProps = {
     preset: Preset;
     newPreset?: boolean;
+    onSaveNew?: (data: Partial<Preset>) => void;
+    onDelete?: () => void;
     onCancel?: () => void;
 };
 
-export default function PresetItemViewer({preset, newPreset = false, onCancel}: PresetViewerProps) {
-    const {createPreset, updatePreset, deletePreset} = usePluginContext()
+export default function PresetItemViewer(
+    {
+        preset,
+        newPreset = false,
+        onSaveNew,
+        onDelete,
+        onCancel
+    }: PresetViewerProps) {
+    const {updatePreset} = usePluginContext()
     const [isEditing, setIsEditing] = useState(false);
     const [presetName, setPresetName] = useState(preset?.name);
     const [presetDescription, setPresetDescription] = useState(preset?.description);
     const [presetData, setPresetData] = useState(preset?.data);
 
+    useEffect(() => {
+        setIsEditing(false);
+        setPresetName(preset?.name)
+        setPresetDescription(preset?.description)
+        setPresetData(preset?.data)
+    }, [preset]);
+
     const format = useFormatter()
 
     // Handle saving the updated category name
-    const handleSave = async () => {
-        console.log("saved")
+    const handleUpdate = async () => {
+        try {
+            const updatedPreset = await updatePreset(preset.id, {
+                name: presetName,
+                version: preset.version += 1,
+                description: presetDescription,
+                data: presetData
+            });
+            preset.name = updatedPreset.name
+            preset.description = updatedPreset.description
+            preset.data = updatedPreset.data
+            preset.version = updatedPreset.version
+            preset.updatedAt = updatedPreset.updatedAt
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating preset:', error);
+        }
+
         setIsEditing(false);
-        // try {
-        //     preset.name = presetName
-        //     await updatePreset(preset.id, {name: categoryName});
-        //
-        //     setIsEditing(false);
-        // } catch (error) {
-        //     console.error('Error updating category:', error);
-        // }
     };
 
     // Handle canceling the edit
@@ -48,12 +73,30 @@ export default function PresetItemViewer({preset, newPreset = false, onCancel}: 
         }
     };
 
-    const handleAdd = () => {
-        console.log("added")
+    // Handle saving a new preset
+    const handleAdd = async () => {
+        const newPreset = {
+            name: presetName,
+            description: presetDescription,
+            data: presetData
+        }
+        if (onSaveNew) onSaveNew(newPreset)
+        else throw new Error("Failed to add new preset")
     }
 
+    // Handle deleting a preset
     const handleDelete = async () => {
-        console.log("deleted")
+        if (onDelete) onDelete()
+        else throw new Error("Failed to delete preset")
+    }
+
+    // Handle copying preset data
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(preset.data);
+        } catch (error) {
+            console.error('Failed to copy preset data:', error);
+        }
     }
 
     return (
@@ -75,14 +118,13 @@ export default function PresetItemViewer({preset, newPreset = false, onCancel}: 
                 <div className="flex space-x-2 ml-auto bg-punish-900 rounded">
                     {(newPreset) || (!newPreset && isEditing) ? (
                         <>
-                            <Save onClick={handleSave}/>
+                            <Save onClick={newPreset ? handleAdd : handleUpdate}/>
                             <Cancel onClick={handleCancel}/>
                         </>
                     ) : (
                         <>
                             <Edit onClick={() => setIsEditing(true)}/>
-                            <ConfirmDelete onClick={handleDelete} canDelete={true}
-                            />
+                            <ConfirmDelete onClick={handleDelete} canDelete={true}/>
                         </>
                     )}
                 </div>
@@ -115,14 +157,21 @@ export default function PresetItemViewer({preset, newPreset = false, onCancel}: 
             )}
 
             {/* Conditionally enable textarea for data based on isEditing */}
-            <Textarea
-                readOnly={!((newPreset) || (!newPreset && isEditing))}
-                rows={3}
-                placeholder={"Preset data"}
-                className="rounded-xl bg-punish-900"
-                value={presetData}
-                onChange={(e) => setPresetData(e.target.value)}
-            />
+            <div className="relative w-full">
+                <Textarea
+                    readOnly={!((newPreset) || (!newPreset && isEditing))}
+                    rows={3}
+                    placeholder={"Preset data"}
+                    className={`rounded-xl bg-punish-900 ${!((newPreset) || (!newPreset && isEditing)) ? "pr-8" : ""}`}
+                    value={presetData}
+                    onChange={(e) => setPresetData(e.target.value)}
+                />
+                {!((newPreset) || (!newPreset && isEditing)) ? (
+                    <Copy className="absolute top-2 right-2" onClick={handleCopy}/>
+                ) : (
+                    ""
+                )}
+            </div>
         </div>
     );
 }

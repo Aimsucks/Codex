@@ -27,14 +27,17 @@ export async function PUT(request: NextRequest, {params}: { params: { slug: stri
     if (!plugin) return NextResponse.json({message: "Unauthorized to edit this plugin"}, {status: 403})
 
     try {
+        console.log(data)
         const updatedPreset: Preset | null = await prisma.preset.update({
             where: {id},
             data: {
                 name: data.name,
-                description: data.description,
+                version: data.version,
+                description: data.description || "",
                 data: data.data
             }
         })
+        console.log(updatedPreset)
 
         return NextResponse.json(updatedPreset, {status: 200});
     } catch (error) {

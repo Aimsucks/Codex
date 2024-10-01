@@ -1,6 +1,7 @@
 import {Category, Preset} from "@prisma/client";
 import {ChevronUp, ExternalLink} from "lucide-react"
 import {Button} from "@/components/ui/button";
+import Add from "@/components/shared/buttons/Add";
 
 type CategoryProps = {
     category: Category & { presets?: Preset[] };
@@ -15,21 +16,36 @@ export default function CategoryListItem(
         category, depth, isExpanded, onClick, onItemOpen
     }: CategoryProps) {
     return (
-        <div
-            className={`cursor-pointer place-items-center flex flex-grow bg-slate-700 p-2 ${getIndentationClass(depth)} rounded-xl hover:bg-slate-600 transition duration-200`}
-            onClick={onClick}>
-            <div className="flex">
-                <ChevronUp
-                    className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}/>
-                <span className="text-md ml-2">{category.name}</span>
-            </div>
+        <div className="flex place-items-center space-x-5">
+            <div
+                className={`cursor-pointer place-items-center flex flex-grow bg-slate-700 p-2 ${getIndentationClass(depth)} rounded-xl hover:bg-slate-600 transition duration-200`}
+                onClick={onClick}>
+                <div className="flex">
+                    <ChevronUp
+                        className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}/>
+                    <span className="text-md ml-2">{category.name}</span>
+                </div>
 
-            <Button variant="ghost" size="icon"
-                    className="h-6 w-6 ml-auto rounded"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onItemOpen(category)
-                    }}><ExternalLink className="h-4 w-4"/></Button>
+                <Button variant="ghost" size="icon"
+                        className="h-6 w-6 ml-auto rounded"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onItemOpen(category)
+                        }}>
+                    <ExternalLink className="h-4 w-4"/>
+                </Button>
+            </div>
+            {isExpanded ? (
+                <div>
+                    <Add type="subcategory"
+                         className="h-10 w-10 rounded-xl bg-slate-700 hover:bg-slate-600"
+                         onClick={() => console.log("clicked!")}
+                    />
+                </div>
+            ) : (
+                ""
+            )}
+
         </div>
     );
 }

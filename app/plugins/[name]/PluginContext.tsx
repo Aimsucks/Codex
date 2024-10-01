@@ -8,6 +8,11 @@ type PluginType = Plugin & {
     presets: Preset[];
 };
 
+type CategoryWithRelations = Category & {
+    presets?: Preset[];
+    subcategories?: CategoryWithRelations[];
+}
+
 // Define the shape of the context value
 interface PluginContextType {
     // Plugin data
@@ -17,13 +22,13 @@ interface PluginContextType {
     };
 
     // Category functions
-    createCategory: (newCategoryData: Partial<Category>) => Promise<void>;
-    updateCategory: (categoryId: number, updatedCategoryData: Partial<Category>) => Promise<void>;
+    createCategory: (newCategoryData: Partial<Category>) => Promise<Category>;
+    updateCategory: (categoryId: number, updatedCategoryData: Partial<Category>) => Promise<Category>;
     deleteCategory: (categoryId: number) => Promise<void>;
 
     // Preset functions
-    createPreset: (newPresetData: Partial<Preset>) => Promise<void>;
-    updatePreset: (presetId: number, updatedPresetData: Partial<Preset>) => Promise<void>;
+    createPreset: (newPresetData: Partial<Preset>) => Promise<Preset>;
+    updatePreset: (presetId: number, updatedPresetData: Partial<Preset>) => Promise<Preset>;
     deletePreset: (presetId: number) => Promise<void>;
 }
 
@@ -61,7 +66,7 @@ export const PluginProvider = ({children, plugin}: {
                     ...prevPlugin,
                     categories: [...prevPlugin.categories, createdCategory]
                 }));
-                console.log('Category created:', createdCategory);
+                return createdCategory;
             } else {
                 console.error('Error creating category:', await response.text());
             }
@@ -82,27 +87,39 @@ export const PluginProvider = ({children, plugin}: {
 
             if (response.ok) {
                 const updatedCategory = await response.json();
-                console.log('Category updated:', updatedCategory);
 
+                // Recursively update the category within the category tree (top-level or subcategories)
+                const updatedCategories = updateCategoryInHierarchy(currentPlugin.categories, updatedCategory);
 
-                // Find the index of the category to be updated
-                const categoryIndex = currentPlugin.categories.findIndex(category => category.id === updatedCategory.id);
-                if (categoryIndex !== -1) {
+                // Update the plugin state with the new categories array
+                setCurrentPlugin(prevPlugin => ({
+                    ...prevPlugin,
+                    categories: updatedCategories
+                }));
 
-                    // Create a new array with the updated category
-                    const updatedCategories = [...currentPlugin.categories];
-                    updatedCategories[categoryIndex] = updatedCategory;
+                return updatedCategory;
 
-                    // Update the plugin state with the new categories array
-                    setCurrentPlugin(prevPlugin => ({
-                        ...prevPlugin,
-                        categories: updatedCategories
-                    }));
-                }
             } else console.error('Error updating category:', await response.text())
         } catch (error) {
             console.error("Error updating category:", error);
         }
+    };
+
+    // Recursively go through category list and update the appropriate category in the context
+    const updateCategoryInHierarchy = (categories: CategoryWithRelations[], updatedCategory: Category): CategoryWithRelations[] => {
+        return categories.map(category => {
+            if (category.id === updatedCategory.id) {
+                // If it's the category we want to update, return the updated category
+                return {...category, ...updatedCategory};
+            } else if (category.subcategories && category.subcategories.length > 0) {
+                // If the category has subcategories, recursively update the subcategories
+                return {
+                    ...category,
+                    subcategories: updateCategoryInHierarchy(category.subcategories, updatedCategory),
+                };
+            }
+            return category;
+        });
     };
 
     // Function to delete a category
@@ -117,7 +134,6 @@ export const PluginProvider = ({children, plugin}: {
                     ...prevPlugin,
                     categories: prevPlugin.categories.filter(category => category.id !== categoryId)
                 }));
-                console.log('Category deleted');
             } else {
                 console.error('Error deleting category:', await response.text());
             }
@@ -141,7 +157,7 @@ export const PluginProvider = ({children, plugin}: {
                     ...prevPlugin,
                     presets: [...prevPlugin.presets, createdPreset]
                 }));
-                console.log('Preset created:', createdPreset);
+                return createdPreset;
             } else {
                 console.error('Error creating preset:', await response.text());
             }
@@ -170,6 +186,7 @@ export const PluginProvider = ({children, plugin}: {
                         presets: updatedPresets
                     }));
                 }
+                return updatedPreset;
             } else {
                 console.error('Error updating preset:', await response.text());
             }
@@ -190,7 +207,6 @@ export const PluginProvider = ({children, plugin}: {
                     ...prevPlugin,
                     presets: prevPlugin.presets.filter(preset => preset.id !== presetId)
                 }));
-                console.log('Preset deleted');
             } else {
                 console.error('Error deleting preset:', await response.text());
             }
