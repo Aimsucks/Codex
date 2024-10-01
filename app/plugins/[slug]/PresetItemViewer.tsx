@@ -8,7 +8,7 @@ import Edit from "@/components/shared/buttons/Edit";
 import Save from "@/components/shared/buttons/Save";
 import Cancel from "@/components/shared/buttons/Cancel";
 import ConfirmDelete from "@/components/shared/buttons/ConfirmDelete";
-import {usePluginContext} from "@/app/plugins/[name]/PluginContext";
+import {usePluginContext} from "@/app/plugins/[slug]/PluginContext";
 import Copy from "@/components/shared/buttons/Copy";
 
 type PresetViewerProps = {

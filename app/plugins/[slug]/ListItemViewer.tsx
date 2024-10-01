@@ -1,6 +1,6 @@
 import {Category, Preset} from "@prisma/client"
-import PresetItemViewer from "@/app/plugins/[name]/PresetItemViewer";
-import CategoryItemViewer from "@/app/plugins/[name]/CategoryItemViewer";
+import PresetItemViewer from "@/app/plugins/[slug]/PresetItemViewer";
+import CategoryItemViewer from "@/app/plugins/[slug]/CategoryItemViewer";
 
 type ItemViewerProps = {
     item: Category & { presets?: Preset[] } | Preset | null;

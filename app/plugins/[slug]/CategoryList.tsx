@@ -1,7 +1,7 @@
 import {Category, Preset} from "@prisma/client";
 import {useState} from "react";
-import PresetListItem from "@/app/plugins/[name]/PresetListItem";
-import CategoryListItem from "@/app/plugins/[name]/CategoryListItem";
+import PresetListItem from "@/app/plugins/[slug]/PresetListItem";
+import CategoryListItem from "@/app/plugins/[slug]/CategoryListItem";
 import Add from "@/components/shared/buttons/Add";
 
 type CategoryWithRelations = Category & {

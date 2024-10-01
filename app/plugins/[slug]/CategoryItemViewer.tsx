@@ -1,8 +1,8 @@
 import {Category, Preset} from "@prisma/client"
-import PresetItemViewer from "@/app/plugins/[name]/PresetItemViewer";
+import PresetItemViewer from "@/app/plugins/[slug]/PresetItemViewer";
 import {useEffect, useState} from "react";
 import {Input} from "@/components/ui/input";
-import {usePluginContext} from "@/app/plugins/[name]/PluginContext";
+import {usePluginContext} from "@/app/plugins/[slug]/PluginContext";
 import ConfirmDelete from "@/components/shared/buttons/ConfirmDelete";
 import Add from "@/components/shared/buttons/Add";
 import Cancel from "@/components/shared/buttons/Cancel";
@@ -12,9 +12,10 @@ import {Separator} from "@/components/ui/separator";
 
 type CategoryViewerProps = {
     category: Category & { presets?: Preset[] };
+    newCategory: boolean;
 };
 
-export default function CategoryItemViewer({category}: CategoryViewerProps) {
+export default function CategoryItemViewer({category, newCategory}: CategoryViewerProps) {
     const {updateCategory, deleteCategory, createPreset, deletePreset} = usePluginContext()
     const [isEditing, setIsEditing] = useState(false);
     const [categoryName, setCategoryName] = useState(category.name);

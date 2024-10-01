@@ -8,17 +8,26 @@ export default function PresetListItem({preset, depth, onItemOpen}: {
     onItemOpen: (item: Preset | Category) => void;
 }) {
     return (
+
+        // Preset bar
         <div
             className={`flex place-items-center bg-punish-800 p-2 ${getIndentationClass(depth)} rounded-xl`}
         >
+
+            {/* Preset name */}
             <span className="text-md ml-2">{preset.name}</span>
+
+            {/* "Open" button to display individual preset information on right */}
             <Button variant="ghost" size="icon"
                     className="h-6 w-6 ml-auto rounded"
-                    onClick={() => onItemOpen(preset)}><ExternalLink className="h-4 w-4"/></Button>
+                    onClick={() => onItemOpen(preset)}>
+                <ExternalLink className="h-4 w-4"/>
+            </Button>
         </div>
     );
 }
 
+// As depth goes up, the bar is indented more
 const getIndentationClass = (depth: number): string => {
     switch (depth) {
         case 0:

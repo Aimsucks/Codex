@@ -7,7 +7,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDiscord, faGithub} from '@fortawesome/free-brands-svg-icons'
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
-import {usePluginContext} from "@/app/plugins/[name]/PluginContext";
+import {usePluginContext} from "@/app/plugins/[slug]/PluginContext";
 
 export default function PluginInfo() {
     const {plugin} = usePluginContext()

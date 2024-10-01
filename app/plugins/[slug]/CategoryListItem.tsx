@@ -17,15 +17,24 @@ export default function CategoryListItem(
     }: CategoryProps) {
     return (
         <div className="flex place-items-center space-x-5">
+
+            {/* Category bar, which is clickable element and will expand it to show subcategories and presets */}
             <div
-                className={`cursor-pointer place-items-center flex flex-grow bg-slate-700 p-2 ${getIndentationClass(depth)} rounded-xl hover:bg-slate-600 transition duration-200`}
-                onClick={onClick}>
+                className={`cursor-pointer place-items-center flex flex-grow bg-slate-700 p-2 
+                    ${getIndentationClass(depth)} rounded-xl hover:bg-slate-600 transition duration-200`}
+                onClick={onClick}
+            >
+
+                {/* Animated arrow and category name */}
                 <div className="flex">
                     <ChevronUp
-                        className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}/>
+                        className={`transform transition-transform duration-200 
+                            ${isExpanded ? 'rotate-180' : 'rotate-0'}`}
+                    />
                     <span className="text-md ml-2">{category.name}</span>
                 </div>
 
+                {/* "Open" button to display category and preset information on right */}
                 <Button variant="ghost" size="icon"
                         className="h-6 w-6 ml-auto rounded"
                         onClick={(e) => {
@@ -35,6 +44,8 @@ export default function CategoryListItem(
                     <ExternalLink className="h-4 w-4"/>
                 </Button>
             </div>
+
+            {/* Display add button when category is expanded */}
             {isExpanded ? (
                 <div>
                     <Add type="subcategory"
@@ -50,6 +61,7 @@ export default function CategoryListItem(
     );
 }
 
+// As depth goes up, the bar is indented more
 const getIndentationClass = (depth: number): string => {
     switch (depth) {
         case 0:
