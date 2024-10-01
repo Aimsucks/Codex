@@ -1,62 +1,64 @@
-import {Category, Preset} from "@prisma/client";
-import {ChevronUp, ExternalLink} from "lucide-react"
-import {Button} from "@/components/ui/button";
-import Add from "@/components/shared/buttons/Add";
+import { Category, Preset } from '@prisma/client';
+import { ChevronUp, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Add from '@/components/shared/buttons/Add';
 
 type CategoryProps = {
     category: Category & { presets?: Preset[] };
     depth: number;
     onClick: () => void;
     isExpanded: boolean;
-    onItemOpen: (item: Preset | Category & { presets?: Preset[] }) => void;
+    onItemOpen: (item: Preset | (Category & { presets?: Preset[] })) => void;
 };
 
-export default function CategoryListItem(
-    {
-        category, depth, isExpanded, onClick, onItemOpen
-    }: CategoryProps) {
+export default function CategoryListItem({
+    category,
+    depth,
+    isExpanded,
+    onClick,
+    onItemOpen,
+}: CategoryProps) {
     return (
-        <div className="flex place-items-center space-x-5">
-
+        <div className='flex place-items-center space-x-5'>
             {/* Category bar, which is clickable element and will expand it to show subcategories and presets */}
             <div
-                className={`cursor-pointer place-items-center flex flex-grow bg-slate-700 p-2 
-                    ${getIndentationClass(depth)} rounded-xl hover:bg-slate-600 transition duration-200`}
+                className={`flex flex-grow cursor-pointer place-items-center bg-slate-700 p-2 ${getIndentationClass(depth)} rounded-xl transition duration-200 hover:bg-slate-600`}
                 onClick={onClick}
             >
-
                 {/* Animated arrow and category name */}
-                <div className="flex">
+                <div className='flex'>
                     <ChevronUp
-                        className={`transform transition-transform duration-200 
-                            ${isExpanded ? 'rotate-180' : 'rotate-0'}`}
+                        className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}
                     />
-                    <span className="text-md ml-2">{category.name}</span>
+                    <span className='text-md ml-2'>{category.name}</span>
                 </div>
 
                 {/* "Open" button to display category and preset information on right */}
-                <Button variant="ghost" size="icon"
-                        className="h-6 w-6 ml-auto rounded"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onItemOpen(category)
-                        }}>
-                    <ExternalLink className="h-4 w-4"/>
+                <Button
+                    variant='ghost'
+                    size='icon'
+                    className='ml-auto h-6 w-6 rounded'
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onItemOpen(category);
+                    }}
+                >
+                    <ExternalLink className='h-4 w-4' />
                 </Button>
             </div>
 
             {/* Display add button when category is expanded */}
             {isExpanded ? (
                 <div>
-                    <Add type="subcategory"
-                         className="h-10 w-10 rounded-xl bg-slate-700 hover:bg-slate-600"
-                         onClick={() => console.log("clicked!")}
+                    <Add
+                        type='subcategory'
+                        className='h-10 w-10 rounded-xl bg-slate-700 hover:bg-slate-600'
+                        onClick={() => console.log('clicked!')}
                     />
                 </div>
             ) : (
-                ""
+                ''
             )}
-
         </div>
     );
 }
@@ -77,4 +79,4 @@ const getIndentationClass = (depth: number): string => {
         default:
             return 'ml-40';
     }
-}
+};

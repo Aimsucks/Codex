@@ -1,15 +1,15 @@
-import {Preset} from "@prisma/client"
-import {useFormatter} from "next-intl";
-import {Badge} from "@/components/ui/badge"
-import {Textarea} from "@/components/ui/textarea";
-import {useEffect, useState} from "react";
-import {Input} from "@/components/ui/input";
-import Edit from "@/components/shared/buttons/Edit";
-import Save from "@/components/shared/buttons/Save";
-import Cancel from "@/components/shared/buttons/Cancel";
-import ConfirmDelete from "@/components/shared/buttons/ConfirmDelete";
-import {usePluginContext} from "@/app/plugins/[slug]/PluginContext";
-import Copy from "@/components/shared/buttons/Copy";
+import { Preset } from '@prisma/client';
+import { useFormatter } from 'next-intl';
+import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import Edit from '@/components/shared/buttons/Edit';
+import Save from '@/components/shared/buttons/Save';
+import Cancel from '@/components/shared/buttons/Cancel';
+import ConfirmDelete from '@/components/shared/buttons/ConfirmDelete';
+import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
+import Copy from '@/components/shared/buttons/Copy';
 
 type PresetViewerProps = {
     preset: Preset;
@@ -19,43 +19,44 @@ type PresetViewerProps = {
     onCancel?: () => void;
 };
 
-export default function PresetItemViewer(
-    {
-        preset,
-        newPreset = false,
-        onSaveNew,
-        onDelete,
-        onCancel
-    }: PresetViewerProps) {
-    const {updatePreset} = usePluginContext()
+export default function PresetItemViewer({
+    preset,
+    newPreset = false,
+    onSaveNew,
+    onDelete,
+    onCancel,
+}: PresetViewerProps) {
+    const { updatePreset } = usePluginContext();
     const [isEditing, setIsEditing] = useState(false);
     const [presetName, setPresetName] = useState(preset?.name);
-    const [presetDescription, setPresetDescription] = useState(preset?.description);
+    const [presetDescription, setPresetDescription] = useState(
+        preset?.description
+    );
     const [presetData, setPresetData] = useState(preset?.data);
 
     useEffect(() => {
         setIsEditing(false);
-        setPresetName(preset?.name)
-        setPresetDescription(preset?.description)
-        setPresetData(preset?.data)
+        setPresetName(preset?.name);
+        setPresetDescription(preset?.description);
+        setPresetData(preset?.data);
     }, [preset]);
 
-    const format = useFormatter()
+    const format = useFormatter();
 
     // Handle saving the updated category name
     const handleUpdate = async () => {
         try {
             const updatedPreset = await updatePreset(preset.id, {
                 name: presetName,
-                version: preset.version += 1,
+                version: (preset.version += 1),
                 description: presetDescription,
-                data: presetData
+                data: presetData,
             });
-            preset.name = updatedPreset.name
-            preset.description = updatedPreset.description
-            preset.data = updatedPreset.data
-            preset.version = updatedPreset.version
-            preset.updatedAt = updatedPreset.updatedAt
+            preset.name = updatedPreset.name;
+            preset.description = updatedPreset.description;
+            preset.data = updatedPreset.data;
+            preset.version = updatedPreset.version;
+            preset.updatedAt = updatedPreset.updatedAt;
             setIsEditing(false);
         } catch (error) {
             console.error('Error updating preset:', error);
@@ -66,7 +67,7 @@ export default function PresetItemViewer(
 
     // Handle canceling the edit
     const handleCancel = () => {
-        if (newPreset && onCancel) onCancel()
+        if (newPreset && onCancel) onCancel();
         else {
             setPresetName(preset?.name); // Revert to original name
             setIsEditing(false);
@@ -78,17 +79,17 @@ export default function PresetItemViewer(
         const newPreset = {
             name: presetName,
             description: presetDescription,
-            data: presetData
-        }
-        if (onSaveNew) onSaveNew(newPreset)
-        else throw new Error("Failed to add new preset")
-    }
+            data: presetData,
+        };
+        if (onSaveNew) onSaveNew(newPreset);
+        else throw new Error('Failed to add new preset');
+    };
 
     // Handle deleting a preset
     const handleDelete = async () => {
-        if (onDelete) onDelete()
-        else throw new Error("Failed to delete preset")
-    }
+        if (onDelete) onDelete();
+        else throw new Error('Failed to delete preset');
+    };
 
     // Handle copying preset data
     const handleCopy = async () => {
@@ -97,79 +98,93 @@ export default function PresetItemViewer(
         } catch (error) {
             console.error('Failed to copy preset data:', error);
         }
-    }
+    };
 
     return (
-        <div className="flex flex-auto flex-col space-y-1">
-            <div className="flex">
-
+        <div className='flex flex-auto flex-col space-y-1'>
+            <div className='flex'>
                 {/* Conditionally render preset name or input field based on isEditing */}
-                {(newPreset) || (!newPreset && isEditing) ? (
+                {newPreset || (!newPreset && isEditing) ? (
                     <Input
-                        className="text-xl font-bold bg-punish-950 p-2 rounded-xl h-8 w-2/3"
+                        className='h-8 w-2/3 rounded-xl bg-punish-950 p-2 text-xl font-bold'
                         value={presetName}
                         onChange={(e) => setPresetName(e.target.value)}
                     />
                 ) : (
-                    <span className="text-2xl font-bold">{preset?.name}</span>
+                    <span className='text-2xl font-bold'>{preset?.name}</span>
                 )}
 
                 {/* Edit button, save and cancel buttons */}
-                <div className="flex space-x-2 ml-auto bg-punish-900 rounded">
-                    {(newPreset) || (!newPreset && isEditing) ? (
+                <div className='ml-auto flex space-x-2 rounded bg-punish-900'>
+                    {newPreset || (!newPreset && isEditing) ? (
                         <>
-                            <Save onClick={newPreset ? handleAdd : handleUpdate}/>
-                            <Cancel onClick={handleCancel}/>
+                            <Save
+                                onClick={newPreset ? handleAdd : handleUpdate}
+                            />
+                            <Cancel onClick={handleCancel} />
                         </>
                     ) : (
                         <>
-                            <Edit onClick={() => setIsEditing(true)}/>
-                            <ConfirmDelete onClick={handleDelete} canDelete={true}/>
+                            <Edit onClick={() => setIsEditing(true)} />
+                            <ConfirmDelete
+                                onClick={handleDelete}
+                                canDelete={true}
+                            />
                         </>
                     )}
                 </div>
             </div>
 
             {/* Badges for version number and last updated relative date */}
-            <div className="flex space-x-2 justify-items-center">
+            <div className='flex justify-items-center space-x-2'>
                 {!newPreset ? (
                     <>
-                        <span><Badge variant="secondary">Version {preset.version}</Badge></span>
-                        <span><Badge
-                            variant="secondary">Updated {format.relativeTime(preset.updatedAt)}</Badge></span>
+                        <span>
+                            <Badge variant='secondary'>
+                                Version {preset.version}
+                            </Badge>
+                        </span>
+                        <span>
+                            <Badge variant='secondary'>
+                                Updated {format.relativeTime(preset.updatedAt)}
+                            </Badge>
+                        </span>
                     </>
                 ) : (
-                    ""
+                    ''
                 )}
             </div>
 
             {/* Conditionally render description or textarea input field based on isEditing */}
-            {(newPreset) || (!newPreset && isEditing) ? (
+            {newPreset || (!newPreset && isEditing) ? (
                 <Textarea
                     rows={3}
-                    placeholder={"Preset description"}
-                    className="rounded-xl bg-punish-900"
-                    value={presetDescription || ""}
+                    placeholder={'Preset description'}
+                    className='rounded-xl bg-punish-900'
+                    value={presetDescription || ''}
                     onChange={(e) => setPresetDescription(e.target.value)}
                 />
             ) : (
-                <span className="text-md">{preset?.description}</span>
+                <span className='text-md'>{preset?.description}</span>
             )}
 
             {/* Conditionally enable textarea for data based on isEditing */}
-            <div className="relative w-full">
+            <div className='relative w-full'>
                 <Textarea
-                    readOnly={!((newPreset) || (!newPreset && isEditing))}
+                    readOnly={!(newPreset || (!newPreset && isEditing))}
                     rows={3}
-                    placeholder={"Preset data"}
-                    className={`rounded-xl bg-punish-900 ${!((newPreset) || (!newPreset && isEditing)) ? "pr-8" : ""}`}
+                    placeholder={'Preset data'}
+                    className={`rounded-xl bg-punish-900 ${!(newPreset || (!newPreset && isEditing)) ? 'pr-8' : ''}`}
                     value={presetData}
                     onChange={(e) => setPresetData(e.target.value)}
                 />
-                {!((newPreset) || (!newPreset && isEditing)) ? (
-                    <Copy className="absolute top-2 right-2" onClick={handleCopy}/>
+                {!(newPreset || (!newPreset && isEditing)) ? (
+                    <Copy
+                        className='absolute right-2 top-2'
+                        onClick={handleCopy}
+                    />
                 ) : (
-                    ""
+                    ''
                 )}
             </div>
         </div>

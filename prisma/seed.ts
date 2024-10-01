@@ -1,15 +1,14 @@
-import {PrismaClient} from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-
     /*
     Users
      */
 
     const user = await prisma.user.upsert({
-        where: {name: 'Aimsucks'},
+        where: { name: 'Aimsucks' },
         update: {},
         create: {
             name: 'Aimsucks',
@@ -23,14 +22,15 @@ async function main() {
      */
 
     const plugin = await prisma.plugin.upsert({
-        where: {name: "Codex Example"},
+        where: { name: 'Codex Example' },
         update: {},
         create: {
             name: 'Codex Example',
-            description: 'Providing an example of interacting with a repository of presets for FFXIV home.',
+            description:
+                'Providing an example of interacting with a repository of presets for FFXIV home.',
             icon: 'https://github.com/Aimsucks/CodexExample/blob/master/Assets/icon.png?raw=true',
-            discordLink: "https://discord.gg/mm24u9qN3E",
-            githubLink: "https://github.com/aimsucks/codex"
+            discordLink: 'https://discord.gg/mm24u9qN3E',
+            githubLink: 'https://github.com/aimsucks/codex',
         },
     });
 
@@ -57,25 +57,37 @@ async function main() {
      */
 
     const configCategory = await prisma.category.upsert({
-        where: {categoryIdentifier: {pluginId: plugin.id, name: "Configuration Presets"}},
+        where: {
+            categoryIdentifier: {
+                pluginId: plugin.id,
+                name: 'Configuration Presets',
+            },
+        },
         update: {},
         create: {
             name: 'Configuration Presets',
-            pluginId: plugin.id
+            pluginId: plugin.id,
         },
     });
 
     const pluginCategory = await prisma.category.upsert({
-        where: {categoryIdentifier: {pluginId: plugin.id, name: "Plugin Presets"}},
+        where: {
+            categoryIdentifier: { pluginId: plugin.id, name: 'Plugin Presets' },
+        },
         update: {},
         create: {
             name: 'Plugin Presets',
-            pluginId: plugin.id
+            pluginId: plugin.id,
         },
     });
 
     const interfaceCategory = await prisma.category.upsert({
-        where: {categoryIdentifier: {pluginId: plugin.id, name: "Interface Presets"}},
+        where: {
+            categoryIdentifier: {
+                pluginId: plugin.id,
+                name: 'Interface Presets',
+            },
+        },
         update: {},
         create: {
             name: 'Interface Presets',
@@ -85,7 +97,9 @@ async function main() {
     });
 
     const moduleCategory = await prisma.category.upsert({
-        where: {categoryIdentifier: {pluginId: plugin.id, name: "Module Presets"}},
+        where: {
+            categoryIdentifier: { pluginId: plugin.id, name: 'Module Presets' },
+        },
         update: {},
         create: {
             name: 'Module Presets',
@@ -99,7 +113,12 @@ async function main() {
      */
 
     await prisma.preset.upsert({
-        where: {presetIdentifier: {categoryId: configCategory.id, name: 'True / 30'}},
+        where: {
+            presetIdentifier: {
+                categoryId: configCategory.id,
+                name: 'True / 30',
+            },
+        },
         update: {},
         create: {
             name: 'True / 30',
@@ -112,7 +131,12 @@ async function main() {
     });
 
     await prisma.preset.upsert({
-        where: {presetIdentifier: {categoryId: configCategory.id, name: 'False / 20'}},
+        where: {
+            presetIdentifier: {
+                categoryId: configCategory.id,
+                name: 'False / 20',
+            },
+        },
         update: {},
         create: {
             name: 'False / 20',
@@ -125,7 +149,12 @@ async function main() {
     });
 
     await prisma.preset.upsert({
-        where: {presetIdentifier: {categoryId: pluginCategory.id, name: 'General Preset'}},
+        where: {
+            presetIdentifier: {
+                categoryId: pluginCategory.id,
+                name: 'General Preset',
+            },
+        },
         update: {},
         create: {
             name: 'General Preset',
@@ -137,7 +166,12 @@ async function main() {
     });
 
     await prisma.preset.upsert({
-        where: {presetIdentifier: {categoryId: interfaceCategory.id, name: 'Int. Preset 1'}},
+        where: {
+            presetIdentifier: {
+                categoryId: interfaceCategory.id,
+                name: 'Int. Preset 1',
+            },
+        },
         update: {},
         create: {
             name: 'Int. Preset 1',
@@ -149,7 +183,12 @@ async function main() {
     });
 
     await prisma.preset.upsert({
-        where: {presetIdentifier: {categoryId: interfaceCategory.id, name: 'Int. Preset 2'}},
+        where: {
+            presetIdentifier: {
+                categoryId: interfaceCategory.id,
+                name: 'Int. Preset 2',
+            },
+        },
         update: {},
         create: {
             name: 'Int. Preset 2',
@@ -161,7 +200,12 @@ async function main() {
     });
 
     await prisma.preset.upsert({
-        where: {presetIdentifier: {categoryId: moduleCategory.id, name: 'Mod. Preset'}},
+        where: {
+            presetIdentifier: {
+                categoryId: moduleCategory.id,
+                name: 'Mod. Preset',
+            },
+        },
         update: {},
         create: {
             name: 'Mod. Preset',

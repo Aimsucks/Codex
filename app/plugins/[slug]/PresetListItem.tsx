@@ -1,27 +1,32 @@
-import {Category, Preset} from "@prisma/client";
-import {Button} from "@/components/ui/button";
-import {ExternalLink} from "lucide-react";
+import { Category, Preset } from '@prisma/client';
+import { Button } from '@/components/ui/button';
+import { ExternalLink } from 'lucide-react';
 
-export default function PresetListItem({preset, depth, onItemOpen}: {
+export default function PresetListItem({
+    preset,
+    depth,
+    onItemOpen,
+}: {
     preset: Preset;
     depth: number;
     onItemOpen: (item: Preset | Category) => void;
 }) {
     return (
-
         // Preset bar
         <div
             className={`flex place-items-center bg-punish-800 p-2 ${getIndentationClass(depth)} rounded-xl`}
         >
-
             {/* Preset name */}
-            <span className="text-md ml-2">{preset.name}</span>
+            <span className='text-md ml-2'>{preset.name}</span>
 
             {/* "Open" button to display individual preset information on right */}
-            <Button variant="ghost" size="icon"
-                    className="h-6 w-6 ml-auto rounded"
-                    onClick={() => onItemOpen(preset)}>
-                <ExternalLink className="h-4 w-4"/>
+            <Button
+                variant='ghost'
+                size='icon'
+                className='ml-auto h-6 w-6 rounded'
+                onClick={() => onItemOpen(preset)}
+            >
+                <ExternalLink className='h-4 w-4' />
             </Button>
         </div>
     );
@@ -43,4 +48,4 @@ const getIndentationClass = (depth: number): string => {
         default:
             return 'ml-40';
     }
-}
+};
