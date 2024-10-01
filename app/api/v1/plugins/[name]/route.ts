@@ -1,22 +1,57 @@
 import {NextRequest, NextResponse} from "next/server";
 import {prisma} from "@/prisma";
+import {Plugin} from "@prisma/client"
 
-export async function GET(
-    request: NextRequest,
-    {params}: { params: { name: string } }
-) {
-    const plugin = await prisma.plugin.findFirst({
-        where: {name: {equals: decodeURI(params.name), mode: "insensitive"}},
-        select: {
-            id: true,
-            name: true,
-            description: true
+export async function GET(request: NextRequest, {params}: { params: { name: string } }) {
+    const name: string = decodeURI(params.name)
+
+    const plugin: Plugin | null = await prisma.plugin.findFirst({
+        where: {
+            name: {
+                equals: name,
+                mode: "insensitive"
+            }
         },
-    });
+        include: {
+            categories: {
+                include: {
+                    presets: true,
+                    subcategories: recursiveCategories(2)
+                },
+                where: {parentCategoryId: null},
+                orderBy: {name: "asc"}
+            },
+            presets: true
+        }
+    })
 
-    // Return entirety of plugin data if the plugin exists
     if (plugin) return NextResponse.json(plugin, {status: 200});
 
-    // Return 404 if no plugin was found by the provided name
-    return NextResponse.json({message: "Plugin not found."}, {status: 404});
+    return NextResponse.json({message: `Plugin ${name} not found`}, {status: 404});
 }
+
+const recursiveCategories: any = (level: number) => {
+    if (level === 0) {
+        return {
+            include: {
+                subcategories: false,
+                presets: {
+                    include: true,
+                    orderBy: {name: "asc",},
+                },
+            },
+            orderBy: {name: "asc",},
+        };
+    }
+
+    return {
+        include: {
+            subcategories: recursiveCategories(level - 1),
+            presets: {
+                include: true,
+                orderBy: {name: "asc",},
+            },
+        },
+        orderBy: {name: "asc",},
+    };
+};

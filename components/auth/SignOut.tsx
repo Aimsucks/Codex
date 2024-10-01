@@ -9,7 +9,7 @@ export default function SignOut() {
                 await signOut();
             }}
         >
-            <Button className="rounded" variant="secondary" type="submit">Sign out</Button>
+            <Button className="rounded-xl" variant="secondary" type="submit">Sign out</Button>
         </form>
     );
 }

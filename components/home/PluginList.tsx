@@ -8,7 +8,6 @@ export default async function PluginList() {
                 orderBy: {
                     updatedAt: 'desc'
                 },
-                take: 1,
                 select: {
                     updatedAt: true
                 }
@@ -16,12 +15,15 @@ export default async function PluginList() {
         }
     })
 
+    const arrayToFill = new Array(9)
+    arrayToFill.fill(plugins[0])
+
     return (
-        <>
-            {plugins.map((plugin) => (
-                <PluginCard plugin={plugin} latestUpdate={plugin.presets[0]?.updatedAt || plugin.createdAt}
+        <div className="grid grid-cols-3 gap-5">
+            {arrayToFill.map((plugin) => (
+                <PluginCard plugin={plugin} presets={plugin.presets}
                             key={plugin.id}/>
             ))}
-        </>
+        </div>
     )
 }

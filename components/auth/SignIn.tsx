@@ -9,7 +9,7 @@ export default function SignIn() {
                 await signIn("discord");
             }}
         >
-            <Button className="rounded" variant="default" type="submit">Sign in</Button>
+            <Button className="rounded-xl" variant="default" type="submit">Sign in</Button>
         </form>
     );
 }

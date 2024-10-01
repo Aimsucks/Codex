@@ -8,8 +8,9 @@ export default async function TopBar() {
     const session = await auth();
 
     return (
-        <div className="w-full h-20 fixed top-0"> {/* Full-width fixed-height area */}
-            <div className="container mx-auto px-4 h-full"> {/* Contain all items to the container width */}
+        <div
+            className="w-full h-20 top-0 bg-punish-950 backdrop-blur-sm bg-opacity-50"> {/* Full-width fixed-height area */}
+            <div className="container mx-auto px-0 h-full"> {/* Contain all items to the container width */}
                 <div className="flex justify-between items-center h-full"> {/* Left- and right-align items */}
 
                     {/* Left-side items */}
@@ -31,7 +32,7 @@ export default async function TopBar() {
                         ) : (
                             <>
                                 <div className="flex items-center space-x-2">
-                                    <Avatar className="w-8 h-8">
+                                    <Avatar className="w-8 h-8 border-2 border-punish-700">
                                         <AvatarImage src={session.user?.image || undefined}/>
                                         <AvatarFallback>?</AvatarFallback>
                                     </Avatar>
