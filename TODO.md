@@ -5,6 +5,7 @@
 * Develop a basic front-end so people can log in and create/update presets for their plugins.
 * When creating presets, have a "Save and Add Another" button to make it faster to add new ones.
 * Limit the front-end to only work with authenticated creators so the design can be simpler.
+* Add form validation for preset saving, maybe convert it into an actual form.
 
 ## Medium-term
 
