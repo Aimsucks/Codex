@@ -6,4 +6,4 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 RUN npx prisma generate
 RUN pnpm run build
-CMD ["pnpm", "run", "start"]
+CMD npx prisma migrate deploy && pnpm run start

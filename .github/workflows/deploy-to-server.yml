@@ -1,0 +1,25 @@
+name: Pull latest image and start server
+
+on:
+  registry_package:
+    types: [ published ]
+
+jobs:
+  pull-and-start-container:
+    runs-on: [ self-hosted, linux, X64, server ]
+
+    steps:
+      - name: Pull latest docker-compose.yml
+        run: |
+          cd /root/codex
+          curl -o docker-compose.yml https://raw.githubusercontent.com/Aimsucks/Codex/refs/heads/master/docker-compose.yml
+
+      - name: Pull the latest image
+        run: |
+          cd /root/codex
+          docker compose pull
+
+      - name: Start the containers
+        run: |
+          cd /root/codex
+          docker compose up -d
