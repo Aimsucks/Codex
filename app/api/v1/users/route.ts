@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/prisma';
 import { User } from '@prisma/client';
 import { Session } from 'next-auth';
 import { auth } from '@/auth';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     const session: Session | null = await auth();
 
     if (!session || !session.user?.isAdmin)

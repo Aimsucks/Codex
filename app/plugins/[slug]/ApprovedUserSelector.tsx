@@ -13,7 +13,7 @@ export default function ApprovedUserSelector({
     onValueChange,
 }: ApprovedUserSelectorProps) {
     const [users, setUsers] = useState<User[]>([]);
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -22,7 +22,7 @@ export default function ApprovedUserSelector({
                 if (response.ok) {
                     const users: User[] = await response.json();
                     setUsers(users);
-                } else throw new Error('Failed to fetch items');
+                }
             } catch (error) {
                 console.error(error);
             }
