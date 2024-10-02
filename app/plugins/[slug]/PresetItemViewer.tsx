@@ -26,7 +26,7 @@ export default function PresetItemViewer({
     onDelete,
     onCancel,
 }: PresetViewerProps) {
-    const { updatePreset } = usePluginContext();
+    const { userPermissions, updatePreset } = usePluginContext();
     const [isEditing, setIsEditing] = useState(false);
     const [presetName, setPresetName] = useState(preset?.name);
     const [presetDescription, setPresetDescription] = useState(
@@ -116,24 +116,30 @@ export default function PresetItemViewer({
                 )}
 
                 {/* Edit button, save and cancel buttons */}
-                <div className='ml-auto flex space-x-2 rounded bg-punish-900'>
-                    {newPreset || (!newPreset && isEditing) ? (
-                        <>
-                            <Save
-                                onClick={newPreset ? handleAdd : handleUpdate}
-                            />
-                            <Cancel onClick={handleCancel} />
-                        </>
-                    ) : (
-                        <>
-                            <Edit onClick={() => setIsEditing(true)} />
-                            <ConfirmDelete
-                                onClick={handleDelete}
-                                canDelete={true}
-                            />
-                        </>
-                    )}
-                </div>
+                {userPermissions.isCurrentPluginEditor ? (
+                    <div className='ml-auto flex space-x-2 rounded bg-punish-900'>
+                        {newPreset || (!newPreset && isEditing) ? (
+                            <>
+                                <Save
+                                    onClick={
+                                        newPreset ? handleAdd : handleUpdate
+                                    }
+                                />
+                                <Cancel onClick={handleCancel} />
+                            </>
+                        ) : (
+                            <>
+                                <Edit onClick={() => setIsEditing(true)} />
+                                <ConfirmDelete
+                                    onClick={handleDelete}
+                                    canDelete={true}
+                                />
+                            </>
+                        )}
+                    </div>
+                ) : (
+                    ''
+                )}
             </div>
 
             {/* Badges for version number and last updated relative date */}

@@ -21,7 +21,7 @@ export default function CategoryList({
         item: Preset | (Category & { presets?: Preset[]; newCategory: boolean })
     ) => void;
 }) {
-    const { plugin } = usePluginContext();
+    const { plugin, userPermissions } = usePluginContext();
 
     // State to track expanded categories
     const [expandedCategories, setExpandedCategories] = useState<number[]>([]);
@@ -43,7 +43,7 @@ export default function CategoryList({
         // Top-level div to make the categories and presets expand horizontally and appear spaced
         <div className='flex flex-grow flex-col space-y-5'>
             {/* Display header with a button to add top level categories */}
-            {depth == 0 ? (
+            {depth == 0 && userPermissions.isCurrentPluginEditor ? (
                 <div className='flex space-x-5'>
                     <div className='text-md flex flex-grow place-items-center rounded-xl bg-punish-800 p-2 pl-4 font-bold'>
                         Plugin Category and Preset Editor

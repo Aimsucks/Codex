@@ -12,38 +12,41 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 type PluginCardProps = {
-    plugin: Plugin;
-    presets: Preset[];
+    plugin: Plugin & { presets: Partial<Preset>[] };
 };
 
-export default function PluginCard({ plugin, presets }: PluginCardProps) {
+export default function PluginCard({ plugin }: PluginCardProps) {
     const format = useFormatter();
 
     return (
-        <Card className='h-64 rounded-2xl border-punish-700 bg-punish-900 transition duration-200 hover:bg-punish-800'>
+        <Card className='h-56 rounded-2xl border-punish-700 bg-punish-900 transition duration-200 hover:bg-punish-800'>
             <Link
                 href={'/plugins/' + encodeURIComponent(plugin.name)}
-                className='flex h-full items-center justify-between'
+                className='flex h-full items-center'
             >
-                <div className='w-2/3'>
+                <div className='h-full w-2/3'>
                     <CardHeader>
                         <CardTitle>{plugin.name}</CardTitle>
                         <CardDescription className='line-clamp-3'>
                             {plugin.description || ''}
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className='mt-auto space-y-2'>
+                    <CardContent className='space-y-2 pb-0'>
                         <div className='flex items-center'>
                             <BookText className='mr-2 h-4 w-4' />
-                            <span>{presets.length} presets available</span>
+                            <span>
+                                {plugin.presets.length} presets available
+                            </span>
                         </div>
 
-                        {presets[0].updatedAt ? (
+                        {plugin.presets[0].updatedAt ? (
                             <div className='flex items-center'>
                                 <Clock className='mr-2 h-4 w-4' />
                                 <span>
                                     Updated{' '}
-                                    {format.relativeTime(presets[0].updatedAt)}
+                                    {format.relativeTime(
+                                        plugin.presets[0].updatedAt
+                                    )}
                                 </span>
                             </div>
                         ) : (

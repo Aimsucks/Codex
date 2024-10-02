@@ -23,6 +23,11 @@ interface PluginContextType {
         user: UserPlugin[];
     };
 
+    userPermissions: {
+        isAdmin: boolean;
+        isCurrentPluginEditor: boolean;
+    };
+
     // Plugin functions
     updatePlugin: (
         pluginId: number,
@@ -63,9 +68,11 @@ export const usePluginContext = () => {
 export const PluginProvider = ({
     children,
     plugin,
+    userPermissions,
 }: {
     children: React.ReactNode;
     plugin: PluginContextType['plugin'];
+    userPermissions: PluginContextType['userPermissions'];
 }) => {
     // State to hold plugin data so it can be updated live
     const [currentPlugin, setCurrentPlugin] = useState<PluginType>(plugin);
@@ -466,6 +473,7 @@ export const PluginProvider = ({
         <PluginContext.Provider
             value={{
                 plugin: currentPlugin,
+                userPermissions: userPermissions,
                 updatePlugin,
                 createCategory,
                 updateCategory,

@@ -2,6 +2,7 @@ import { Category, Preset } from '@prisma/client';
 import { ChevronUp, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Add from '@/components/shared/buttons/Add';
+import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
 
 type CategoryProps = {
     category: Category & { presets?: Preset[] };
@@ -20,6 +21,8 @@ export default function CategoryListItem({
     onClick,
     onItemOpen,
 }: CategoryProps) {
+    const { userPermissions } = usePluginContext();
+
     return (
         <div className='flex place-items-center space-x-5'>
             {/* Category bar, which is clickable element and will expand it to show subcategories and presets */}
@@ -50,7 +53,7 @@ export default function CategoryListItem({
             </div>
 
             {/* Display add button when category is expanded */}
-            {isExpanded ? (
+            {isExpanded && userPermissions.isCurrentPluginEditor ? (
                 <div>
                     <Add
                         type='subcategory'

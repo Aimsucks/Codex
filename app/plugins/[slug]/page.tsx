@@ -2,7 +2,7 @@ import PluginInfo from '@/app/plugins/[slug]/PluginInfo';
 import { PluginProvider } from '@/app/plugins/[slug]/PluginContext';
 import PresetBrowser from '@/app/plugins/[slug]/PresetBrowser';
 import Image from 'next/image';
-import { Category, Plugin, Preset, UserPlugin } from '@prisma/client';
+import { Category, Plugin, Preset, User, UserPlugin } from '@prisma/client';
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from 'next-auth';
@@ -13,12 +13,19 @@ type PluginType = Plugin & {
     user: UserPlugin[];
 };
 
+type UserPermissionsType = {
+    isAdmin: boolean;
+    isCurrentPluginEditor: boolean;
+};
+
 export default async function PluginPage({
     params,
 }: {
     params: { slug: string };
 }) {
-    const plugin = await getPlugin(params.slug);
+    const { plugin, userPermissions } = await getPluginAndUserPermissions(
+        params.slug
+    );
 
     if (!plugin) {
         return (
@@ -42,14 +49,14 @@ export default async function PluginPage({
 
     if (plugin)
         return (
-            <PluginProvider plugin={plugin}>
+            <PluginProvider plugin={plugin} userPermissions={userPermissions}>
                 <PluginInfo />
                 <PresetBrowser />
             </PluginProvider>
         );
 }
 
-const getPlugin = async (pluginNameOrIdRaw: string) => {
+const getPluginAndUserPermissions = async (pluginNameOrIdRaw: string) => {
     const session: Session | null = await auth();
     const userId = session?.user?.id;
 
@@ -74,7 +81,22 @@ const getPlugin = async (pluginNameOrIdRaw: string) => {
         },
     });
 
-    return plugin;
+    const user: (User & { plugins: UserPlugin[] }) | null =
+        await prisma.user.findUnique({
+            where: { id: userId || '' },
+            include: { plugins: true },
+        });
+
+    const userPermissions: UserPermissionsType = {
+        isAdmin: !!user?.isAdmin,
+        isCurrentPluginEditor: !!user?.plugins.filter(
+            (userPlugin) =>
+                userPlugin.pluginId === plugin?.id &&
+                userPlugin.userId === user?.id
+        ).length,
+    };
+
+    return { plugin, userPermissions };
 };
 
 const recursiveCategories: any = (level: number) => {

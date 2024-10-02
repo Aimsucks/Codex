@@ -24,6 +24,7 @@ export default function CategoryItemViewer({
     onItemOpen,
 }: CategoryViewerProps) {
     const {
+        userPermissions,
         createCategory,
         updateCategory,
         deleteCategory,
@@ -152,23 +153,27 @@ export default function CategoryItemViewer({
 
                 {/* Edit button, or save and cancel buttons in a small box to the right */}
                 {/* TODO: Add permissions here for authenticated users for this plugin */}
-                <div className='ml-auto flex space-x-2 rounded bg-punish-900'>
-                    {isEditing || category.newCategory ? (
-                        <>
-                            <Save onClick={handleSaveCategory} />
-                            <Cancel onClick={handleCancelCategory} />
-                        </>
-                    ) : (
-                        <>
-                            <Add type='preset' onClick={handleAddPreset} />
-                            <Edit onClick={() => setIsEditing(true)} />
-                            <ConfirmDelete
-                                onClick={handleDeleteCategory}
-                                canDelete={!category.presets?.length}
-                            />
-                        </>
-                    )}
-                </div>
+                {userPermissions.isCurrentPluginEditor ? (
+                    <div className='ml-auto flex space-x-2 rounded bg-punish-900'>
+                        {isEditing || category.newCategory ? (
+                            <>
+                                <Save onClick={handleSaveCategory} />
+                                <Cancel onClick={handleCancelCategory} />
+                            </>
+                        ) : (
+                            <>
+                                <Add type='preset' onClick={handleAddPreset} />
+                                <Edit onClick={() => setIsEditing(true)} />
+                                <ConfirmDelete
+                                    onClick={handleDeleteCategory}
+                                    canDelete={!category.presets?.length}
+                                />
+                            </>
+                        )}
+                    </div>
+                ) : (
+                    ''
+                )}
             </div>
 
             {/* Display new presets first */}

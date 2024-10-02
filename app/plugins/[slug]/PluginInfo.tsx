@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { Plugin, UserPlugin } from '@prisma/client';
 
 export default function PluginInfo() {
-    const { plugin, updatePlugin } = usePluginContext();
+    const { plugin, userPermissions, updatePlugin } = usePluginContext();
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -125,7 +125,8 @@ export default function PluginInfo() {
                         ) : (
                             ''
                         )}
-                        {plugin.discordLink ? (
+                        {userPermissions.isAdmin &&
+                        userPermissions.isCurrentPluginEditor ? (
                             <Button
                                 variant='secondary'
                                 className='gap-2 rounded-xl bg-punish-800 hover:bg-punish-700'
