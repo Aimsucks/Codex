@@ -105,7 +105,7 @@ export default function PluginInfo() {
                                         icon={faGithub}
                                         size='xl'
                                     />
-                                    Project GitHub
+                                    Project Source
                                 </Button>
                             </Link>
                         ) : (

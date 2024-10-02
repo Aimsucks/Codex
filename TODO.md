@@ -2,6 +2,8 @@
 
 ## Short-term
 
+- Add file uploader for plugin images
+- Make edit mode icons bigger, try to use grid to make the bottom potion wider
 - Add metadata to Codex links so they show pretty pictures.
 - Add form validation for preset saving, maybe convert it into an actual form.
 
