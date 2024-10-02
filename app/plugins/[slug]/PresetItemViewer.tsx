@@ -130,10 +130,14 @@ export default function PresetItemViewer({
                         ) : (
                             <>
                                 <Edit onClick={() => setIsEditing(true)} />
-                                <ConfirmDelete
-                                    onClick={handleDelete}
-                                    canDelete={true}
-                                />
+                                {onDelete ? (
+                                    <ConfirmDelete
+                                        onClick={handleDelete}
+                                        canDelete={true}
+                                    />
+                                ) : (
+                                    ''
+                                )}
                             </>
                         )}
                     </div>
