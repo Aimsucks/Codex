@@ -23,3 +23,7 @@ jobs:
         run: |
           cd /root/codex
           docker compose up -d
+
+      - name: Clean up
+        run: |
+          docker system prune -f
