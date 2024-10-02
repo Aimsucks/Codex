@@ -1,11 +1,61 @@
-.git
+# Ignore node_modules and other dependencies
 node_modules
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore local environment files
+.env.local
+.env.development
+.env.test
+.env.production.local
+
+# Ignore local build files
 .next
-.eslint*
-.prettier
-README.md
-npm-debug.log
-LICENSE
+out
+.cache
+dist
+
+# Ignore Docker-related files
 Dockerfile
-.dockerignore
 docker-compose.yml
+.dockerignore
+
+# Ignore git-related files
+.git
+.gitignore
+
+# Ignore editor-related files
+.vscode/
+.idea/
+*.swp
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Ignore macOS system files
+.DS_Store
+*.AppleDouble
+.LSOverride
+
+# Ignore Thumbnails
+._*
+
+# Ignore temporary files
+tmp/
+*.tmp
+*.bak
+*.backup
+*.swp
+*.lock
+
+# Ignore coverage folder generated during testing
+coverage/
+
+# Ignore testing-related files
+jest.config.js
+jest.setup.js
+__tests__/
+__mocks__/
+test/
