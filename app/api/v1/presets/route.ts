@@ -1,43 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
 import { prisma } from '@/prisma';
-import { Plugin, Preset } from '@prisma/client';
-import { Session } from 'next-auth';
+import { Plugin } from '@prisma/client';
 
-export async function POST(request: NextRequest) {
-    const session: Session | null = await auth();
-    const data: any = await request.json();
-
-    if (!session)
-        return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+export async function GET(
+    request: NextRequest,
+    { params }: { params: { slug: string } }
+) {
+    const pluginId: number | string =
+        parseInt(params.slug) || decodeURI(params.slug);
 
     const plugin: Plugin | null = await prisma.plugin.findFirst({
-        where: {
-            id: data.pluginId,
-            user: { some: { userId: session.user?.id } },
+        where:
+            typeof pluginId === 'number'
+                ? { id: pluginId }
+                : { name: { equals: pluginId, mode: 'insensitive' } },
+        include: {
+            categories: {
+                include: {
+                    presets: true,
+                    subcategories: recursiveCategories(2),
+                },
+                where: { parentCategoryId: null },
+            },
+            presets: true,
         },
     });
 
-    if (!plugin)
-        return NextResponse.json(
-            { message: 'Unauthorized to edit this plugin' },
-            { status: 403 }
-        );
+    if (plugin) return NextResponse.json(plugin, { status: 200 });
 
-    try {
-        const createdPreset: Preset | null = await prisma.preset.create({
-            data: {
-                name: data.name,
-                description: data.description,
-                data: data.data,
-                version: data.version,
-                categoryId: data.categoryId,
-                pluginId: plugin.id,
-            },
-        });
-
-        return NextResponse.json(createdPreset, { status: 200 });
-    } catch (error) {
-        return NextResponse.json({ message: 'Server error' }, { status: 500 });
-    }
+    return NextResponse.json({ message: `Plugin not found` }, { status: 404 });
 }
+
+const recursiveCategories: any = (level: number) => {
+    if (level === 0) {
+        return {
+            include: {
+                subcategories: false,
+                presets: { include: true },
+            },
+        };
+    }
+
+    return {
+        include: {
+            subcategories: recursiveCategories(level - 1),
+            presets: {
+                include: true,
+                orderBy: { name: 'asc' },
+            },
+        },
+    };
+};

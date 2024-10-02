@@ -28,23 +28,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return token;
         },
         async session({ session, user, token }) {
-            const prismaUser = await prisma.user.findUnique({
-                where: { id: token.id as string },
-                include: {
-                    plugins: { include: { plugin: true } },
-                },
-            });
+            if (token) {
+                const prismaUser = await prisma.user.findUnique({
+                    where: { id: token.id as string },
+                    include: {
+                        plugins: { include: { plugin: true } },
+                    },
+                });
 
-            const prismaUserPlugins = prismaUser?.plugins.map((p) => p.plugin);
+                const prismaUserPlugins = prismaUser?.plugins.map(
+                    (p) => p.plugin
+                );
 
-            return {
-                ...session,
-                user: {
-                    ...session.user,
-                    isAdmin: prismaUser?.isAdmin,
-                    plugins: prismaUserPlugins,
-                },
-            };
+                return {
+                    ...session,
+                    user: {
+                        ...session.user,
+                        id: prismaUser?.id,
+                        isAdmin: prismaUser?.isAdmin,
+                        plugins: prismaUserPlugins,
+                    },
+                };
+            } else return session;
         },
     },
     ...authConfig,

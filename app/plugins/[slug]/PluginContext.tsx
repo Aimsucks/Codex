@@ -1,11 +1,12 @@
 'use client';
 
 import { createContext, useContext, useState } from 'react';
-import { Category, Plugin, Preset } from '@prisma/client';
+import { Category, Plugin, Preset, UserPlugin } from '@prisma/client';
 
 type PluginType = Plugin & {
     categories: Category[];
     presets: Preset[];
+    user: UserPlugin[];
 };
 
 type CategoryWithRelations = Category & {
@@ -19,7 +20,14 @@ interface PluginContextType {
     plugin: Plugin & {
         categories: Category[];
         presets: Preset[];
+        user: UserPlugin[];
     };
+
+    // Plugin functions
+    updatePlugin: (
+        pluginId: number,
+        updatedPluginData: Partial<Plugin & { user: UserPlugin[] }>
+    ) => Promise<Plugin & { user: UserPlugin[] }>;
 
     // Category functions
     createCategory: (newCategoryData: Partial<Category>) => Promise<Category>;
@@ -61,6 +69,40 @@ export const PluginProvider = ({
 }) => {
     // State to hold plugin data so it can be updated live
     const [currentPlugin, setCurrentPlugin] = useState<PluginType>(plugin);
+
+    const updatePlugin = async (
+        pluginId: number,
+        updatedPluginData: Partial<Plugin & { user: UserPlugin[] }>
+    ) => {
+        try {
+            const response = await fetch(`/api/v1/plugins/${pluginId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedPluginData),
+            });
+
+            if (response.ok) {
+                const updatedPlugin = await response.json();
+
+                setCurrentPlugin((prevPlugin) => ({
+                    ...prevPlugin,
+                    description: updatedPlugin.description,
+                    icon: updatedPlugin.icon,
+                    githubLink: updatedPlugin.githubLink,
+                    discordLink: updatedPlugin.discordLink,
+                    user: updatedPlugin.user,
+                    categories: plugin.categories,
+                    presets: plugin.presets,
+                }));
+
+                return updatedPlugin;
+            } else {
+                console.error('Error updating plugin:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error updating plugin:', error);
+        }
+    };
 
     // Function to create a new category
     const createCategory = async (newCategoryData: Partial<Category>) => {
@@ -424,6 +466,7 @@ export const PluginProvider = ({
         <PluginContext.Provider
             value={{
                 plugin: currentPlugin,
+                updatePlugin,
                 createCategory,
                 updateCategory,
                 deleteCategory,

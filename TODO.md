@@ -9,6 +9,7 @@
 
 ## Medium-term
 
+- Add "pluginOwner" to UserPlugin table to prevent a user from deleting themselves when editing plugin permissions.
 - Give preset descriptions markdown and multi-line support.
 - Provide an endpoint to check for "any presets updated since XYZ date" so plugins can store a date and feed it into the
   API if they want to present users a list of the updated presets since their last visit.

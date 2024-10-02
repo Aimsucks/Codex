@@ -41,7 +41,6 @@ export async function PUT(
         );
 
     try {
-        console.log(data);
         const updatedPreset: Preset | null = await prisma.preset.update({
             where: { id },
             data: {
@@ -51,7 +50,6 @@ export async function PUT(
                 data: data.data,
             },
         });
-        console.log(updatedPreset);
 
         return NextResponse.json(updatedPreset, { status: 200 });
     } catch (error) {
