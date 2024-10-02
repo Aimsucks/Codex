@@ -54,7 +54,7 @@ export default function PluginEditor({ onSave, onCancel }: PluginEditorProps) {
                     className='h-12 rounded-xl bg-punish-950 p-2 text-xl font-bold'
                     rows={2}
                     value={description || ''}
-                    placeholder='GitHub link'
+                    placeholder='Plugin description'
                     onChange={(e) => setDescription(e.target.value)}
                 />
             </div>
