@@ -8,7 +8,9 @@ type CategoryProps = {
     depth: number;
     onClick: () => void;
     isExpanded: boolean;
-    onItemOpen: (item: Preset | (Category & { presets?: Preset[] })) => void;
+    onItemOpen: (
+        item: Preset | (Category & { presets?: Preset[]; newCategory: boolean })
+    ) => void;
 };
 
 export default function CategoryListItem({
@@ -40,7 +42,7 @@ export default function CategoryListItem({
                     className='ml-auto h-6 w-6 rounded'
                     onClick={(e) => {
                         e.stopPropagation();
-                        onItemOpen(category);
+                        onItemOpen({ ...category, newCategory: false });
                     }}
                 >
                     <ExternalLink className='h-4 w-4' />
@@ -53,7 +55,15 @@ export default function CategoryListItem({
                     <Add
                         type='subcategory'
                         className='h-10 w-10 rounded-xl bg-slate-700 hover:bg-slate-600'
-                        onClick={() => console.log('clicked!')}
+                        onClick={() =>
+                            onItemOpen({
+                                id: Date.now(),
+                                name: '',
+                                pluginId: category.pluginId,
+                                parentCategoryId: category.id,
+                                newCategory: true,
+                            })
+                        }
                     />
                 </div>
             ) : (

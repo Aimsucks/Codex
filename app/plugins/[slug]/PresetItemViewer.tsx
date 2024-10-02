@@ -108,6 +108,7 @@ export default function PresetItemViewer({
                     <Input
                         className='h-8 w-2/3 rounded-xl bg-punish-950 p-2 text-xl font-bold'
                         value={presetName}
+                        placeholder='Preset name'
                         onChange={(e) => setPresetName(e.target.value)}
                     />
                 ) : (

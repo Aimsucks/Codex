@@ -1,4 +1,4 @@
-import { Category, Preset } from '@prisma/client';
+import { Preset } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 
@@ -9,7 +9,7 @@ export default function PresetListItem({
 }: {
     preset: Preset;
     depth: number;
-    onItemOpen: (item: Preset | Category) => void;
+    onItemOpen: (item: Preset) => void;
 }) {
     return (
         // Preset bar

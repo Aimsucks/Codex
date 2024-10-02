@@ -11,16 +11,25 @@ import Save from '@/components/shared/buttons/Save';
 import { Separator } from '@/components/ui/separator';
 
 type CategoryViewerProps = {
-    category: Category & { presets?: Preset[] };
-    newCategory: boolean;
+    category: Category & { presets?: Preset[]; newCategory: boolean };
+    onItemOpen: (
+        item:
+            | Preset
+            | ((Category & { presets?: Preset[]; newCategory: boolean }) | null)
+    ) => void;
 };
 
 export default function CategoryItemViewer({
     category,
-    newCategory,
+    onItemOpen,
 }: CategoryViewerProps) {
-    const { updateCategory, deleteCategory, createPreset, deletePreset } =
-        usePluginContext();
+    const {
+        createCategory,
+        updateCategory,
+        deleteCategory,
+        createPreset,
+        deletePreset,
+    } = usePluginContext();
     const [isEditing, setIsEditing] = useState(false);
     const [categoryName, setCategoryName] = useState(category.name);
     const [newPresets, setNewPresets] = useState<Preset[]>([]);
@@ -34,21 +43,37 @@ export default function CategoryItemViewer({
 
     // Handle saving the updated category name
     const handleSaveCategory = async () => {
-        try {
-            const updatedCategory = await updateCategory(category.id, {
-                name: categoryName,
-            });
-            category.name = updatedCategory.name;
-            setIsEditing(false);
-        } catch (error) {
-            console.error('Error updating category:', error);
+        if (category.newCategory)
+            try {
+                const createdCategory = await createCategory({
+                    name: categoryName,
+                    pluginId: category.pluginId,
+                    parentCategoryId: category.parentCategoryId,
+                });
+                onItemOpen({ ...createdCategory, newCategory: false });
+            } catch (error) {
+                console.error('Error creating category:', error);
+            }
+        else {
+            try {
+                const updatedCategory = await updateCategory(category.id, {
+                    name: categoryName,
+                });
+                category.name = updatedCategory.name;
+                setIsEditing(false);
+            } catch (error) {
+                console.error('Error updating category:', error);
+            }
         }
     };
 
     // Handle canceling the edit
     const handleCancelCategory = () => {
-        setCategoryName(category.name); // Revert to original name
-        setIsEditing(false);
+        if (category.newCategory) onItemOpen(null);
+        else {
+            setCategoryName(category.name); // Revert to original name
+            setIsEditing(false);
+        }
     };
 
     // Handle adding a new preset
@@ -76,7 +101,8 @@ export default function CategoryItemViewer({
             categoryId: category.id,
             pluginId: category.pluginId,
         });
-        category.presets?.unshift(createdPreset);
+        if (category.presets?.length) category.presets?.unshift(createdPreset);
+        else category.presets = [createdPreset];
         setNewPresets(newPresets.filter((preset) => preset.id !== id));
     };
 
@@ -93,6 +119,7 @@ export default function CategoryItemViewer({
         } catch (error) {
             console.error('Error deleting category:', error);
         }
+        onItemOpen(null);
     };
 
     // Handle deleting a preset
@@ -112,10 +139,11 @@ export default function CategoryItemViewer({
         <div className='flex flex-auto flex-col'>
             <div className='mb-3 flex items-center'>
                 {/* Conditionally render category name or input field based on isEditing */}
-                {isEditing ? (
+                {isEditing || category.newCategory ? (
                     <Input
                         className='h-8 w-2/3 rounded-xl bg-punish-950 p-2 text-xl font-bold'
                         value={categoryName}
+                        placeholder='Category name'
                         onChange={(e) => setCategoryName(e.target.value)}
                     />
                 ) : (
@@ -125,7 +153,7 @@ export default function CategoryItemViewer({
                 {/* Edit button, or save and cancel buttons in a small box to the right */}
                 {/* TODO: Add permissions here for authenticated users for this plugin */}
                 <div className='ml-auto flex space-x-2 rounded bg-punish-900'>
-                    {isEditing ? (
+                    {isEditing || category.newCategory ? (
                         <>
                             <Save onClick={handleSaveCategory} />
                             <Cancel onClick={handleCancelCategory} />
@@ -136,7 +164,7 @@ export default function CategoryItemViewer({
                             <Edit onClick={() => setIsEditing(true)} />
                             <ConfirmDelete
                                 onClick={handleDeleteCategory}
-                                canDelete={category.presets?.length == 0}
+                                canDelete={!category.presets?.length}
                             />
                         </>
                     )}

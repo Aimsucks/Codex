@@ -3,6 +3,7 @@ import { useState } from 'react';
 import PresetListItem from '@/app/plugins/[slug]/PresetListItem';
 import CategoryListItem from '@/app/plugins/[slug]/CategoryListItem';
 import Add from '@/components/shared/buttons/Add';
+import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
 
 type CategoryWithRelations = Category & {
     presets?: Preset[];
@@ -16,8 +17,12 @@ export default function CategoryList({
 }: {
     categories: CategoryWithRelations[];
     depth?: number;
-    onItemOpen: (item: Preset | (Category & { presets?: Preset[] })) => void;
+    onItemOpen: (
+        item: Preset | (Category & { presets?: Preset[]; newCategory: boolean })
+    ) => void;
 }) {
+    const { plugin } = usePluginContext();
+
     // State to track expanded categories
     const [expandedCategories, setExpandedCategories] = useState<number[]>([]);
 
@@ -46,7 +51,15 @@ export default function CategoryList({
                     <Add
                         type='top-level category'
                         className='ml-auto h-10 w-10 rounded-xl bg-punish-800 hover:bg-punish-700'
-                        onClick={() => console.log('clicked!')}
+                        onClick={() =>
+                            onItemOpen({
+                                id: Date.now(),
+                                name: '',
+                                pluginId: plugin.id,
+                                parentCategoryId: null,
+                                newCategory: true,
+                            })
+                        }
                     />
                 </div>
             ) : (

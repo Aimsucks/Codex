@@ -73,10 +73,17 @@ export const PluginProvider = ({
 
             if (response.ok) {
                 const createdCategory = await response.json();
+
                 setCurrentPlugin((prevPlugin) => ({
                     ...prevPlugin,
-                    categories: [...prevPlugin.categories, createdCategory],
+                    categories: newCategoryData.parentCategoryId
+                        ? addCategoryToHierarchy(
+                              prevPlugin.categories,
+                              createdCategory
+                          )
+                        : [...prevPlugin.categories, createdCategory], // If no parent, add to top level
                 }));
+
                 return createdCategory;
             } else {
                 console.error(
@@ -87,6 +94,37 @@ export const PluginProvider = ({
         } catch (error) {
             console.error('Error creating category:', error);
         }
+    };
+
+    // Recursively add a new category to the category hierarchy
+    const addCategoryToHierarchy = (
+        categories: CategoryWithRelations[],
+        newCategory: CategoryWithRelations
+    ): CategoryWithRelations[] => {
+        return categories.map((category) => {
+            // If the new category belongs to this category (i.e., parent category)
+            if (category.id === newCategory.parentCategoryId) {
+                return {
+                    ...category,
+                    subcategories: category.subcategories
+                        ? [...category.subcategories, newCategory]
+                        : [newCategory], // Add new category to subcategories
+                };
+            } else if (
+                category.subcategories &&
+                category.subcategories.length > 0
+            ) {
+                // Recursively add the category to the subcategories
+                return {
+                    ...category,
+                    subcategories: addCategoryToHierarchy(
+                        category.subcategories,
+                        newCategory
+                    ),
+                };
+            }
+            return category;
+        });
     };
 
     // Function to update a category within the context and database
@@ -164,8 +202,9 @@ export const PluginProvider = ({
             if (response.ok) {
                 setCurrentPlugin((prevPlugin) => ({
                     ...prevPlugin,
-                    categories: prevPlugin.categories.filter(
-                        (category) => category.id !== categoryId
+                    categories: removeCategoryFromHierarchy(
+                        prevPlugin.categories,
+                        categoryId
                     ),
                 }));
             } else {
@@ -177,6 +216,31 @@ export const PluginProvider = ({
         } catch (error) {
             console.error('Error deleting category:', error);
         }
+    };
+
+    // Recursively remove a category and its subcategories from the category hierarchy
+    const removeCategoryFromHierarchy = (
+        categories: CategoryWithRelations[],
+        categoryId: number
+    ): CategoryWithRelations[] => {
+        return categories
+            .filter((category) => category.id !== categoryId) // Filter out the category to be deleted
+            .map((category) => {
+                if (
+                    category.subcategories &&
+                    category.subcategories.length > 0
+                ) {
+                    // Recursively handle subcategories if they exist
+                    return {
+                        ...category,
+                        subcategories: removeCategoryFromHierarchy(
+                            category.subcategories,
+                            categoryId
+                        ),
+                    };
+                }
+                return category;
+            });
     };
 
     // Function to create a new preset
@@ -193,6 +257,10 @@ export const PluginProvider = ({
                 setCurrentPlugin((prevPlugin) => ({
                     ...prevPlugin,
                     presets: [...prevPlugin.presets, createdPreset],
+                    categories: addPresetToCategoryInHierarchy(
+                        prevPlugin.categories,
+                        createdPreset
+                    ),
                 }));
                 return createdPreset;
             } else {
@@ -201,6 +269,34 @@ export const PluginProvider = ({
         } catch (error) {
             console.error('Error creating preset:', error);
         }
+    };
+
+    const addPresetToCategoryInHierarchy = (
+        categories: CategoryWithRelations[],
+        preset: Preset
+    ): CategoryWithRelations[] => {
+        return categories.map((category) => {
+            if (category.id === preset.categoryId) {
+                return {
+                    ...category,
+                    presets: category.presets
+                        ? [...category.presets, preset]
+                        : [preset],
+                };
+            } else if (
+                category.subcategories &&
+                category.subcategories.length > 0
+            ) {
+                return {
+                    ...category,
+                    subcategories: addPresetToCategoryInHierarchy(
+                        category.subcategories,
+                        preset
+                    ),
+                };
+            }
+            return category;
+        });
     };
 
     // Function to update a preset
@@ -217,17 +313,16 @@ export const PluginProvider = ({
 
             if (response.ok) {
                 const updatedPreset = await response.json();
-                const presetIndex = currentPlugin.presets.findIndex(
-                    (preset) => preset.id === updatedPreset.id
-                );
-                if (presetIndex !== -1) {
-                    const updatedPresets = [...currentPlugin.presets];
-                    updatedPresets[presetIndex] = updatedPreset;
-                    setCurrentPlugin((prevPlugin) => ({
-                        ...prevPlugin,
-                        presets: updatedPresets,
-                    }));
-                }
+                setCurrentPlugin((prevPlugin) => ({
+                    ...prevPlugin,
+                    presets: prevPlugin.presets.map((preset) =>
+                        preset.id === updatedPreset.id ? updatedPreset : preset
+                    ),
+                    categories: updatePresetInHierarchy(
+                        prevPlugin.categories,
+                        updatedPreset
+                    ),
+                }));
                 return updatedPreset;
             } else {
                 console.error('Error updating preset:', await response.text());
@@ -235,6 +330,35 @@ export const PluginProvider = ({
         } catch (error) {
             console.error('Error updating preset:', error);
         }
+    };
+
+    // Recursively update preset in the category tree
+    const updatePresetInHierarchy = (
+        categories: CategoryWithRelations[],
+        updatedPreset: Preset
+    ): CategoryWithRelations[] => {
+        return categories.map((category) => {
+            if (category.id === updatedPreset.categoryId) {
+                return {
+                    ...category,
+                    presets: category.presets?.map((preset) =>
+                        preset.id === updatedPreset.id ? updatedPreset : preset
+                    ),
+                };
+            } else if (
+                category.subcategories &&
+                category.subcategories.length > 0
+            ) {
+                return {
+                    ...category,
+                    subcategories: updatePresetInHierarchy(
+                        category.subcategories,
+                        updatedPreset
+                    ),
+                };
+            }
+            return category;
+        });
     };
 
     // Function to delete a preset
@@ -250,6 +374,10 @@ export const PluginProvider = ({
                     presets: prevPlugin.presets.filter(
                         (preset) => preset.id !== presetId
                     ),
+                    categories: removePresetFromCategoryInHierarchy(
+                        prevPlugin.categories,
+                        presetId
+                    ),
                 }));
             } else {
                 console.error('Error deleting preset:', await response.text());
@@ -257,6 +385,39 @@ export const PluginProvider = ({
         } catch (error) {
             console.error('Error deleting preset:', error);
         }
+    };
+
+    const removePresetFromCategoryInHierarchy = (
+        categories: CategoryWithRelations[],
+        presetId: number
+    ): CategoryWithRelations[] => {
+        return categories.map((category) => {
+            if (category.presets) {
+                return {
+                    ...category,
+                    presets: category.presets.filter(
+                        (preset) => preset.id !== presetId
+                    ),
+                    // Recursively handle subcategories if they exist
+                    subcategories: category.subcategories
+                        ? removePresetFromCategoryInHierarchy(
+                              category.subcategories,
+                              presetId
+                          )
+                        : [],
+                };
+            }
+            if (category.subcategories && category.subcategories.length > 0) {
+                return {
+                    ...category,
+                    subcategories: removePresetFromCategoryInHierarchy(
+                        category.subcategories,
+                        presetId
+                    ),
+                };
+            }
+            return category;
+        });
     };
 
     return (

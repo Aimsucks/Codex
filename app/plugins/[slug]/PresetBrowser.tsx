@@ -9,7 +9,9 @@ import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
 export default function PresetBrowser() {
     // State to track opened categories
     const [openedItem, setOpenedItem] = useState<
-        Preset | (Category & { presets?: Preset[] }) | null
+        | Preset
+        | (Category & { presets?: Preset[]; newCategory: boolean })
+        | null
     >(null);
 
     // Get plugin details from context
@@ -19,7 +21,9 @@ export default function PresetBrowser() {
 
     // Handler for opening and closing categories
     const handleItemOpen = (
-        item: Preset | (Category & { presets?: Preset[] })
+        item:
+            | Preset
+            | ((Category & { presets?: Preset[]; newCategory: boolean }) | null)
     ) => {
         setOpenedItem(item);
     };
@@ -35,7 +39,7 @@ export default function PresetBrowser() {
                 />
 
                 {/* Right-side category and preset viewer */}
-                <ListItemViewer item={openedItem} />
+                <ListItemViewer item={openedItem} onItemOpen={handleItemOpen} />
             </div>
         </>
     );
