@@ -39,11 +39,11 @@ export default function PluginCard({ plugin }: PluginCardProps) {
                             </span>
                         </div>
 
-                        {plugin.presets[0].updatedAt ? (
+                        {plugin.presets[0]?.updatedAt ? (
                             <div className='flex items-center'>
                                 <Clock className='mr-2 h-4 w-4' />
                                 <span>
-                                    Updated{' '}
+                                    Updated
                                     {format.relativeTime(
                                         plugin.presets[0].updatedAt
                                     )}
@@ -53,7 +53,7 @@ export default function PluginCard({ plugin }: PluginCardProps) {
                             <div className='flex items-center'>
                                 <Sparkles className='mr-2 h-4 w-4' />
                                 <span>
-                                    Added{' '}
+                                    Added
                                     {format.relativeTime(plugin.createdAt)}
                                 </span>
                             </div>

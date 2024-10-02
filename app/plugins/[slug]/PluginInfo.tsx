@@ -63,11 +63,13 @@ export default function PluginInfo() {
         setIsEditing(false);
     };
 
-    const latestUpdatedDate = plugin.presets.reduce((latest, current) => {
-        return new Date(current.updatedAt) > new Date(latest.updatedAt)
-            ? current
-            : latest;
-    }).updatedAt;
+    const latestUpdatedDate = plugin.presets.length
+        ? plugin.presets?.reduce((latest, current) => {
+              return new Date(current.updatedAt) > new Date(latest.updatedAt)
+                  ? current
+                  : latest;
+          }).updatedAt
+        : null;
 
     return (
         <div className='flex flex-col space-y-5'>
@@ -150,12 +152,16 @@ export default function PluginInfo() {
                     </div>
 
                     {/* Plugin last updated relative date statistic */}
-                    <div className='flex flex-1 items-center whitespace-nowrap'>
-                        <Clock className='mr-2 h-6 w-6' />
-                        <span>
-                            Updated {format.relativeTime(latestUpdatedDate)}
-                        </span>
-                    </div>
+                    {latestUpdatedDate ? (
+                        <div className='flex flex-1 items-center whitespace-nowrap'>
+                            <Clock className='mr-2 h-6 w-6' />
+                            <span>
+                                Updated {format.relativeTime(latestUpdatedDate)}
+                            </span>
+                        </div>
+                    ) : (
+                        ''
+                    )}
 
                     {/* Plugin added to API relative date statistic */}
                     <div className='flex flex-1 items-center whitespace-nowrap'>
