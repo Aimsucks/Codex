@@ -18,18 +18,18 @@ export async function createBucketIfNotExists(bucketName: string) {
 }
 
 export async function saveFileInBucket({
-    bucketName,
     fileName,
     file,
     size,
     contentType,
 }: {
-    bucketName: string;
     fileName: string;
     file: Buffer | internal.Readable;
     size: number;
     contentType: string;
 }) {
+    const bucketName = process.env.S3_BUCKET_NAME || 'codex';
+
     // Create bucket if it doesn't exist
     await createBucketIfNotExists(bucketName);
 
@@ -38,5 +38,5 @@ export async function saveFileInBucket({
     // Upload image to S3 bucket
     await s3Client.putObject(bucketName, fileName, file, size, metaData);
 
-    return `https://${process.env.S3_URL}/${bucketName}/${fileName}`;
+    return `${process.env.S3_URL}/${bucketName}/${fileName}`;
 }

@@ -79,7 +79,6 @@ export async function POST(request: NextRequest) {
         )}-${uniqueSuffix}.${mime.getExtension(image.type)}`;
 
         const response = await saveFileInBucket({
-            bucketName: process.env.S3_BUCKET_NAME || 'codex',
             fileName: filename,
             file: buffer,
             size: image.size,
