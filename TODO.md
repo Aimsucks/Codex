@@ -9,6 +9,7 @@
 
 ## Medium-term
 
+- Integrate https://trpc.io/, check T3 stack docs: https://create.t3.gg/en/introduction
 - Add "pluginOwner" to UserPlugin table to prevent a user from deleting themselves when editing plugin permissions.
 - Give preset descriptions markdown and multi-line support.
 - Provide an endpoint to check for "any presets updated since XYZ date" so plugins can store a date and feed it into the
@@ -25,3 +26,10 @@
   created to store the preset versions. This might be better to implement only on the web UI considering it would be
   annoying to implement in-game.
 - Add permissions per-preset and per-category so plugin authors can determine who can edit their presets.
+
+## Setup Documentation
+
+- Traefik
+- PostgreSQL should bascially set itself up
+- Minio needs a bucket created from admin panel
+    - Also needs an access key and secret key generated

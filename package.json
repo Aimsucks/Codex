@@ -34,6 +34,7 @@
         "cmdk": "1.0.0",
         "lucide-react": "^0.446.0",
         "mime": "^4.0.4",
+        "minio": "^8.0.1",
         "next": "14.2.10",
         "next-auth": "^5.0.0-beta.20",
         "next-intl": "^3.20.0",

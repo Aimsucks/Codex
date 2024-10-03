@@ -20,7 +20,7 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: 'carvel.li',
+                hostname: process.env.S3_URL,
                 port: '',
                 pathname: '/**',
             },

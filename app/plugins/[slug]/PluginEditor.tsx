@@ -19,7 +19,7 @@ import { SaveIcon, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
-const maximumFileSize = 1024 * 1024 * 5; // 5 MB
+const maximumFileSize = 1024 * 1024 * 4; // 5 MB
 const acceptedFileTypes = [
     'image/jpeg',
     'image/jpg',

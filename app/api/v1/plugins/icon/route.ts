@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { join } from 'path';
-import { mkdir, stat, writeFile } from 'fs/promises';
 import mime from 'mime';
 import { Session } from 'next-auth';
 import { auth } from '@/auth';
 import { Plugin, UserPlugin } from '@prisma/client';
 import { prisma } from '@/prisma';
+import { saveFileInBucket } from '@/lib/s3-file-management';
 
 export async function POST(request: NextRequest) {
     const formData = await request.formData();
@@ -47,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     const image = (formData.get('image') as File) || null;
 
-    const maximumFileSize = 1024 * 1024 * 5; // 5 MB
+    const maximumFileSize = 1024 * 1024 * 4; // 4 MB
     const acceptedFileTypes = [
         'image/jpeg',
         'image/jpg',
@@ -71,27 +70,6 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await image.arrayBuffer());
-    const relativeUploadDir = `/icons`;
-
-    const uploadDir = join(process.cwd(), 'public', relativeUploadDir);
-
-    try {
-        await stat(uploadDir);
-    } catch (e: any) {
-        if (e.code === 'ENOENT') {
-            // This is for checking the directory is exist (ENOENT : Error No Entry)
-            await mkdir(uploadDir, { recursive: true });
-        } else {
-            console.error(
-                'Error while trying to create directory when uploading a file\n',
-                e
-            );
-            return NextResponse.json(
-                { error: 'Something went wrong' },
-                { status: 500 }
-            );
-        }
-    }
 
     try {
         const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
@@ -99,10 +77,16 @@ export async function POST(request: NextRequest) {
             /\.[^/.]+$/,
             ''
         )}-${uniqueSuffix}.${mime.getExtension(image.type)}`;
-        await writeFile(`${uploadDir}/${filename}`, buffer);
-        const fileUrl = `${relativeUploadDir}/${filename}`;
 
-        return NextResponse.json(fileUrl);
+        const response = await saveFileInBucket({
+            bucketName: process.env.S3_BUCKET_NAME || 'codex',
+            fileName: filename,
+            file: buffer,
+            size: image.size,
+            contentType: image.type,
+        });
+
+        return NextResponse.json(response);
     } catch (e) {
         console.error('Error while trying to upload a file\n', e);
         return NextResponse.json(
