@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext, useState } from 'react';
-import { Category, Plugin, Preset, UserPlugin } from '@prisma/client';
+import { Category, Plugin, Preset, User, UserPlugin } from '@prisma/client';
 
 type PluginType = Plugin & {
     categories: Category[];
     presets: Preset[];
-    user: UserPlugin[];
+    user: (UserPlugin & { user: User })[];
 };
 
 type CategoryWithRelations = Category & {
@@ -20,7 +20,7 @@ interface PluginContextType {
     plugin: Plugin & {
         categories: Category[];
         presets: Preset[];
-        user: UserPlugin[];
+        user: (UserPlugin & { user: User })[];
     };
 
     userPermissions: {
@@ -77,11 +77,22 @@ export const PluginProvider = ({
     // State to hold plugin data so it can be updated live
     const [currentPlugin, setCurrentPlugin] = useState<PluginType>(plugin);
 
-    const updatePlugin = async (
-        pluginId: number,
-        updatedPluginData: Partial<Plugin & { user: UserPlugin[] }>
-    ) => {
+    const updatePlugin = async (pluginId: number, updatedPluginData: any) => {
         try {
+            let filePath = plugin.icon;
+
+            if (updatedPluginData.icon) {
+                const formData = new FormData();
+                formData.append('image', updatedPluginData.icon);
+                formData.append('plugin', plugin.id.toString());
+                const fileResponse = await fetch(`/api/v1/plugins/icon`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                filePath = await fileResponse.json();
+                updatedPluginData.icon = filePath;
+            }
+
             const response = await fetch(`/api/v1/plugins/${pluginId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },

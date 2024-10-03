@@ -25,6 +25,8 @@ services:
       AUTH_DISCORD_ID: ${AUTH_DISCORD_ID}
       AUTH_DISCORD_SECRET: ${AUTH_DISCORD_SECRET}
     depends_on: [ postgres ]
+    volumes:
+      - ./public:/app/public
     networks: [ proxy, internal ]
     labels:
       traefik.enable: true

@@ -68,9 +68,9 @@ export async function PUT(
             { status: 403 }
         );
 
-    const userIdData = data.user
-        .map((userPlugin: any) => userPlugin.userId)
-        .filter((userId: string) => userId !== session.user.id);
+    const userIdData = data.user.filter(
+        (userId: string) => userId !== session.user.id
+    );
     // console.log({ userIdData });
 
     const currentUserIds = plugin.user
@@ -120,7 +120,7 @@ export async function PUT(
                     }),
                 },
             },
-            include: { user: true },
+            include: { user: { include: { user: true } } },
         });
 
         // Work-around for not wanting to access session inside PluginContext, will need to fix at some point

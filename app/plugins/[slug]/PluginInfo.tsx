@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
 import PluginEditor from '@/app/plugins/[slug]/PluginEditor';
 import { useState } from 'react';
-import { Plugin, UserPlugin } from '@prisma/client';
 
 export default function PluginInfo() {
     const { plugin, userPermissions, updatePlugin } = usePluginContext();
@@ -39,18 +38,15 @@ export default function PluginInfo() {
             </div>
         );
 
-    const handleSave = async (
-        data: Partial<Plugin & { user: UserPlugin[] }>
-    ) => {
+    const handleSave = async (data: any) => {
         try {
-            const updatedPlugin: Plugin & { user: UserPlugin[] } =
-                await updatePlugin(plugin.id, {
-                    description: data.description,
-                    icon: data.icon,
-                    githubLink: data.githubLink,
-                    discordLink: data.discordLink,
-                    user: data.user || [],
-                });
+            const updatedPlugin: any = await updatePlugin(plugin.id, {
+                description: data.description,
+                icon: data.icon[0],
+                githubLink: data.githubLink,
+                discordLink: data.discordLink,
+                user: data.approvedUsers.map((u: any) => u.value) || [],
+            });
             plugin.description = updatedPlugin.description;
             plugin.icon = updatedPlugin.icon;
             plugin.githubLink = updatedPlugin.githubLink;

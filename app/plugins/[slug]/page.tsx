@@ -10,7 +10,7 @@ import { Session } from 'next-auth';
 type PluginType = Plugin & {
     categories: Category[];
     presets: Preset[];
-    user: UserPlugin[];
+    user: (UserPlugin & { user: User })[];
 };
 
 type UserPermissionsType = {
@@ -77,7 +77,10 @@ const getPluginAndUserPermissions = async (pluginNameOrIdRaw: string) => {
                 where: { parentCategoryId: null },
             },
             presets: true,
-            user: { where: { NOT: { userId } } },
+            user: {
+                where: { NOT: { userId } },
+                include: { user: true },
+            },
         },
     });
 
