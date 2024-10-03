@@ -1,4 +1,4 @@
-name: Create and publish the image
+name: Create, publish, and deploy
 
 on:
   release:
