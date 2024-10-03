@@ -20,7 +20,7 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: process.env.S3_URL,
+                hostname: 's3.aimsucks.space',
                 port: '',
                 pathname: '/**',
             },
