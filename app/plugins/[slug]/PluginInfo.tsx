@@ -77,6 +77,7 @@ export default function PluginInfo() {
                     width={250}
                     height={250}
                     className='w-40 flex-none'
+                    unoptimized={true}
                 />
 
                 {/* Center plugin name, description, and links */}

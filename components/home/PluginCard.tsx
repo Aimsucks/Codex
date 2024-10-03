@@ -66,6 +66,7 @@ export default function PluginCard({ plugin }: PluginCardProps) {
                     width={250}
                     height={250}
                     className='ml-auto w-1/3 p-5'
+                    unoptimized={true}
                 />
             </Link>
         </Card>
