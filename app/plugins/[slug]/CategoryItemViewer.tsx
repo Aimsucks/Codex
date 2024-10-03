@@ -152,7 +152,6 @@ export default function CategoryItemViewer({
                 )}
 
                 {/* Edit button, or save and cancel buttons in a small box to the right */}
-                {/* TODO: Add permissions here for authenticated users for this plugin */}
                 {userPermissions.isCurrentPluginEditor ? (
                     <div className='ml-auto flex space-x-2 rounded bg-punish-900'>
                         {isEditing || category.newCategory ? (
