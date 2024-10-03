@@ -2,13 +2,17 @@
 
 ## Short-term
 
-- Add file uploader for plugin images
 - Make edit mode icons bigger, try to use grid to make the bottom potion wider
 - Add metadata to Codex links so they show pretty pictures.
 - Add form validation for preset saving, maybe convert it into an actual form.
 
 ## Medium-term
 
+- Move the plugin context provider to `layout.tsx` instead of `page.tsx`
+- Move most of the source code to the `/src` folder
+- Fix the development environment to actually function on a computer instead of relying on my home server.
+- To solve some of the errors during build when no database is
+  available: https://www.reddit.com/r/nextjs/comments/16yh4xs/will_nextjs_always_require_database_access_at/
 - Integrate https://trpc.io/, check T3 stack docs: https://create.t3.gg/en/introduction
 - Add "pluginOwner" to UserPlugin table to prevent a user from deleting themselves when editing plugin permissions.
 - Give preset descriptions markdown and multi-line support.
@@ -30,6 +34,6 @@
 ## Setup Documentation
 
 - Traefik
-- PostgreSQL should bascially set itself up
+- PostgreSQL should basically set itself up
 - Minio needs a bucket created from admin panel
     - Also needs an access key and secret key generated

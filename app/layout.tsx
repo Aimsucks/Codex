@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter as FontSans } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import './globals.css';
@@ -19,7 +19,18 @@ config.autoAddCss = false;
 export const metadata: Metadata = {
     title: 'Codex',
     description:
-        'Providing an interactive repository of presets for FFXIV home.',
+        'Providing an interactive repository of presets for FFXIV plugins.',
+    openGraph: {
+        title: 'Codex',
+        description:
+            'Providing an interactive repository of presets for FFXIV plugins.',
+        url: `https://codex.aimsucks.space`,
+        images: [{ url: 'https://codex.aimsucks.space/icon.png' }],
+    },
+};
+
+export const viewport: Viewport = {
+    themeColor: '#87AC66',
 };
 
 export default async function RootLayout({
