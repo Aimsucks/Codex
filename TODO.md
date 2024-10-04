@@ -2,14 +2,12 @@
 
 ## Short-term
 
-- Make edit mode icons bigger, try to use grid to make the bottom potion wider
-- Add metadata to Codex links so they show pretty pictures.
 - Add form validation for preset saving, maybe convert it into an actual form.
+- Follow the advice from the top comment
+  here: https://www.reddit.com/r/nextjs/comments/1ciqr9g/how_do_i_update_state_at_the_same_time_as_using/
 
 ## Medium-term
 
-- Move the plugin context provider to `layout.tsx` instead of `page.tsx`
-- Move most of the source code to the `/src` folder
 - Fix the development environment to actually function on a computer instead of relying on my home server.
 - To solve some of the errors during build when no database is
   available: https://www.reddit.com/r/nextjs/comments/16yh4xs/will_nextjs_always_require_database_access_at/
@@ -22,6 +20,7 @@
   processing on my end, saving bandwidth for plugins that have _a lot_ of presets.
 - Mimic the functionality of the GitHub file browser for presets so there can be descriptions, separators, and ordering,
   for categories, subcategories, presets, etc.
+- Add loading to most of the buttons.
 
 ## Long-term
 

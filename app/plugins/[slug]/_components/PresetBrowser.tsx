@@ -1,10 +1,10 @@
 'use client';
 
-import CategoryList from '@/app/plugins/[slug]/CategoryList';
-import ListItemViewer from '@/app/plugins/[slug]/ListItemViewer';
+import CategoryList from '@/app/plugins/[slug]/_components/CategoryList';
+import ListItemViewer from '@/app/plugins/[slug]/_components/ListItemViewer';
 import { Category, Preset } from '@prisma/client';
 import { useState } from 'react';
-import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
+import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
 
 export default function PresetBrowser() {
     // State to track opened categories

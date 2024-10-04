@@ -1,8 +1,8 @@
 import { Category, Preset } from '@prisma/client';
-import PresetItemViewer from '@/app/plugins/[slug]/PresetItemViewer';
+import PresetItemViewer from '@/app/plugins/[slug]/_components/PresetItemViewer';
 import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
+import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
 import ConfirmDelete from '@/components/shared/buttons/ConfirmDelete';
 import Add from '@/components/shared/buttons/Add';
 import Cancel from '@/components/shared/buttons/Cancel';

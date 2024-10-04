@@ -1,6 +1,6 @@
-import PluginInfo from '@/app/plugins/[slug]/PluginInfo';
-import { PluginProvider } from '@/app/plugins/[slug]/PluginContext';
-import PresetBrowser from '@/app/plugins/[slug]/PresetBrowser';
+import PluginInfo from '@/app/plugins/[slug]/_components/PluginInfo';
+import { PluginProvider } from '@/app/plugins/[slug]/_components/PluginContext';
+import PresetBrowser from '@/app/plugins/[slug]/_components/PresetBrowser';
 import Image from 'next/image';
 import { Category, Plugin, Preset, User, UserPlugin } from '@prisma/client';
 import { prisma } from '@/prisma';

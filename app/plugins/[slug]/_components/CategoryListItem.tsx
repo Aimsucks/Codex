@@ -2,7 +2,7 @@ import { Category, Preset } from '@prisma/client';
 import { ChevronUp, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Add from '@/components/shared/buttons/Add';
-import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
+import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
 
 type CategoryProps = {
     category: Category & { presets?: Preset[] };

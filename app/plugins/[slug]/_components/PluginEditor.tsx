@@ -1,5 +1,5 @@
 import { Textarea } from '@/components/ui/textarea';
-import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
+import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
 import { User, UserPlugin } from '@prisma/client';
 import {
     Form,
@@ -10,68 +10,31 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import MultipleSelector, { Option } from '@/components/ui/multi-select';
 import { Button } from '@/components/ui/button';
 import { SaveIcon, XCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { pluginUpdateFormSchema } from '@/app/validation/plugin';
+import { z } from 'zod';
+import { useFormState } from 'react-dom';
+import { updatePluginAction } from '@/app/actions/plugin';
 import { useSession } from 'next-auth/react';
 
-const maximumFileSize = 1024 * 1024 * 4; // 5 MB
-const acceptedFileTypes = [
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/webp',
-    'image/svg',
-];
-
-const optionSchema = z.object({
-    label: z.string(),
-    value: z.string(),
-    disable: z.boolean().optional(),
-});
-
-// Something to explore in the future:
-// https://www.codu.co/articles/validate-an-image-file-with-zod-jjhied8p
-const formSchema = z.object({
-    description: z.string().max(300).optional().or(z.literal('')),
-    icon: z
-        .unknown()
-        .transform((value) => {
-            return value as FileList;
-        })
-        .optional()
-        .refine(
-            (fileList) =>
-                !fileList ||
-                fileList?.length == 0 ||
-                fileList[0].size <= maximumFileSize,
-            `Maximum image size is ${maximumFileSize / 1024 / 1024} MB`
-        )
-        .refine(
-            (fileList) =>
-                !fileList ||
-                fileList?.length == 0 ||
-                acceptedFileTypes.includes(fileList[0].type),
-            'Only .jpg, .jpeg, .png, .webp, and .svg formats are supported'
-        ),
-    githubLink: z.string().url().optional().or(z.literal('')),
-    discordLink: z.string().url().optional().or(z.literal('')),
-    approvedUsers: z.array(optionSchema).optional(),
-});
-
 type PluginEditorProps = {
-    onSave?: (data: z.infer<typeof formSchema>) => void;
     onCancel?: () => void;
 };
 
-export default function PluginEditor({ onSave, onCancel }: PluginEditorProps) {
-    const { data: session } = useSession();
+export default function PluginEditor({ onCancel }: PluginEditorProps) {
     const { plugin } = usePluginContext();
+    const { data: session } = useSession();
 
+    const updatePluginActionWithId = updatePluginAction.bind(null, plugin.id);
+
+    const [state, formAction] = useFormState(updatePluginActionWithId, {
+        message: '',
+    });
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
@@ -97,11 +60,10 @@ export default function PluginEditor({ onSave, onCancel }: PluginEditorProps) {
         }))
         .filter((u) => u.value !== session?.user?.id);
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.output<typeof pluginUpdateFormSchema>>({
+        resolver: zodResolver(pluginUpdateFormSchema),
         defaultValues: {
             description: plugin?.description || '',
-            // icon: plugin?.icon || '',
             githubLink: plugin?.githubLink || '',
             discordLink: plugin?.discordLink || '',
             approvedUsers: plugin.user
@@ -114,15 +76,36 @@ export default function PluginEditor({ onSave, onCancel }: PluginEditorProps) {
     });
 
     const fileRef = form.register('icon');
+    const formRef = useRef<HTMLFormElement>(null);
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        if (onSave) onSave(values);
-    }
+    // console.log(form.getValues('approvedUsers'));
 
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                ref={formRef}
+                action={formAction}
+                onSubmit={(evt) => {
+                    evt.preventDefault();
+                    form.handleSubmit((data) => {
+                        const formData = new FormData(formRef.current!);
+
+                        // Append a stringified version of the approvedUsers array because FormData can't handle arrays
+                        if (
+                            data.approvedUsers &&
+                            data.approvedUsers.length > 0
+                        ) {
+                            data.approvedUsers.forEach((user, index) => {
+                                formData.append(
+                                    `approvedUsers[${index}]`,
+                                    JSON.stringify(user)
+                                );
+                            });
+                        }
+                        formAction(formData);
+                    })(evt);
+                }}
+                onReset={onCancel}
                 className='space-y-5 rounded-2xl bg-punish-900 p-5'
             >
                 <FormField
@@ -146,7 +129,7 @@ export default function PluginEditor({ onSave, onCancel }: PluginEditorProps) {
                 <FormField
                     control={form.control}
                     name='icon'
-                    render={({ field }) => (
+                    render={() => (
                         <FormItem>
                             <FormLabel>Plugin Icon</FormLabel>
                             <FormControl>
@@ -204,7 +187,9 @@ export default function PluginEditor({ onSave, onCancel }: PluginEditorProps) {
                             <FormLabel>Approved Editors</FormLabel>
                             <FormControl>
                                 {/* Some custom filtering in the command props to filter based on label and not
-                                value, there were also modifications to multi-select.tsx*/}
+                                value, there were also modifications to multi-select.tsx
+
+                                Refer to https://shadcnui-expansions.typeart.cc/docs/multiple-selector*/}
                                 <MultipleSelector
                                     {...field}
                                     className='rounded-xl bg-punish-950'
@@ -217,6 +202,7 @@ export default function PluginEditor({ onSave, onCancel }: PluginEditorProps) {
                                             No results found
                                         </p>
                                     }
+                                    // onChange={(options) => console.log(options)}
                                     commandProps={{
                                         filter: (
                                             value: string,
@@ -244,7 +230,7 @@ export default function PluginEditor({ onSave, onCancel }: PluginEditorProps) {
                         </FormItem>
                     )}
                 />
-                <div className='flex gap-x-5'>
+                <div className='flex place-items-center gap-x-5'>
                     <Button
                         variant='secondary'
                         className='gap-2 rounded-xl bg-punish-800 hover:bg-punish-700'
@@ -257,11 +243,19 @@ export default function PluginEditor({ onSave, onCancel }: PluginEditorProps) {
                         variant='secondary'
                         className='gap-2 rounded-xl bg-punish-800 hover:bg-punish-700'
                         type='reset'
-                        onClick={onCancel}
                     >
                         <XCircle />
                         Cancel
                     </Button>
+                    {state?.message !== '' && (
+                        <span
+                            className={
+                                state?.error ? 'text-red-500' : 'text-punish-50'
+                            }
+                        >
+                            {state.message}
+                        </span>
+                    )}
                 </div>
             </form>
         </Form>

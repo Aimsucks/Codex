@@ -7,8 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
-import PluginEditor from '@/app/plugins/[slug]/PluginEditor';
+import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
+import PluginEditor from '@/app/plugins/[slug]/_components/PluginEditor';
 import { useState } from 'react';
 
 export default function PluginInfo() {
@@ -171,10 +171,7 @@ export default function PluginInfo() {
             </div>
 
             {isEditing ? (
-                <PluginEditor
-                    onCancel={() => setIsEditing(false)}
-                    onSave={handleSave}
-                />
+                <PluginEditor onCancel={() => setIsEditing(false)} />
             ) : (
                 ''
             )}

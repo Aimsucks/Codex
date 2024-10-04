@@ -1,9 +1,9 @@
 import { Category, Preset } from '@prisma/client';
 import { useState } from 'react';
-import PresetListItem from '@/app/plugins/[slug]/PresetListItem';
-import CategoryListItem from '@/app/plugins/[slug]/CategoryListItem';
+import PresetListItem from '@/app/plugins/[slug]/_components/PresetListItem';
+import CategoryListItem from '@/app/plugins/[slug]/_components/CategoryListItem';
 import Add from '@/components/shared/buttons/Add';
-import { usePluginContext } from '@/app/plugins/[slug]/PluginContext';
+import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
 
 type CategoryWithRelations = Category & {
     presets?: Preset[];
