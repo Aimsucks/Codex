@@ -16,10 +16,10 @@ import MultipleSelector, { Option } from '@/components/ui/multi-select';
 import { Button } from '@/components/ui/button';
 import { SaveIcon, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { pluginUpdateFormSchema } from '@/app/validation/plugin';
+import { pluginUpdateFormSchema } from '@/app/_validation/plugin';
 import { z } from 'zod';
 import { useFormState } from 'react-dom';
-import { updatePluginAction } from '@/app/actions/plugin';
+import { updatePluginAction } from '@/app/_actions/plugin';
 import { useSession } from 'next-auth/react';
 
 type PluginEditorProps = {

@@ -10,7 +10,7 @@ import { prisma } from '@/prisma';
 import {
     pluginPermissionsOptionSchema,
     pluginUpdateFormSchema,
-} from '@/app/validation/plugin';
+} from '@/app/_validation/plugin';
 import { checkUserCanEditPlugin } from '@/lib/authentication';
 import { saveFileInBucket } from '@/lib/s3-file-management';
 import { z } from 'zod';
