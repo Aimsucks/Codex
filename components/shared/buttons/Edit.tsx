@@ -1,3 +1,5 @@
+import { EditIcon } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import {
     Tooltip,
@@ -5,7 +7,6 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { EditIcon } from 'lucide-react';
 
 interface EditProps {
     onClick: () => void;

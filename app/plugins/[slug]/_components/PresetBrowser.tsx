@@ -1,9 +1,12 @@
 'use client';
 
+import { useState } from 'react';
+
+import { PluginType } from '@/prisma';
+
 import CategoryList from '@/app/plugins/[slug]/_components/_list/CategoryList';
 import ListItemViewer from '@/app/plugins/[slug]/_components/_viewer/ListItemViewer';
-import { useState } from 'react';
-import { PluginType } from '@/prisma';
+
 import { ItemViewerType, UserPermissionsType } from '@/lib/definitions';
 
 type PresetBrowserProps = {

@@ -1,7 +1,10 @@
-import { Category, Preset } from '@prisma/client';
 import { ChevronUp, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+
+import { Category, Preset } from '@prisma/client';
+
 import Add from '@/components/shared/buttons/Add';
+import { Button } from '@/components/ui/button';
+
 import { ItemViewerType, UserPermissionsType } from '@/lib/definitions';
 
 type CategoryProps = {

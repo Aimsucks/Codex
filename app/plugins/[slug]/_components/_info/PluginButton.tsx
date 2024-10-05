@@ -1,8 +1,9 @@
-import React from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { IconDefinition } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Link from 'next/link';
+import React from 'react';
+
+import { Button } from '@/components/ui/button';
 
 interface PluginButtonProps {
     icon: IconDefinition;

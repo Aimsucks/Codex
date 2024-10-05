@@ -1,9 +1,10 @@
 import { auth } from '@/auth';
 import Image from 'next/image';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Link from 'next/link';
+
 import SignIn from '@/components/auth/SignIn';
 import SignOut from '@/components/auth/SignOut';
-import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default async function TopBar() {
     const session = await auth();

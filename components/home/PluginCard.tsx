@@ -1,3 +1,10 @@
+import { BookText, Clock, Sparkles } from 'lucide-react';
+import { useFormatter } from 'next-intl';
+import Image from 'next/image';
+import Link from 'next/link';
+
+import type { Plugin, Preset } from '@prisma/client';
+
 import {
     Card,
     CardContent,
@@ -5,11 +12,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import type { Plugin, Preset } from '@prisma/client';
-import { BookText, Clock, Sparkles } from 'lucide-react';
-import { useFormatter } from 'next-intl';
-import Image from 'next/image';
-import Link from 'next/link';
 
 type PluginCardProps = {
     plugin: Plugin & { presets: Partial<Preset>[] };

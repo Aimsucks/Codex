@@ -1,11 +1,14 @@
 'use server';
 
-import { Session } from 'next-auth';
 import { auth } from '@/auth';
-import { checkUserCanEditPlugin } from '@/lib/authentication';
-import { prisma } from '@/prisma';
+import { Session } from 'next-auth';
 import { revalidatePath } from 'next/cache';
+
+import { prisma } from '@/prisma';
+
 import { categoryFormSchema } from '@/app/_validation/category';
+
+import { checkUserCanEditPlugin } from '@/lib/authentication';
 
 export type FormState = {
     message: string;

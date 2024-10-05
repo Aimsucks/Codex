@@ -1,5 +1,6 @@
-import * as Minio from 'minio';
 import internal from 'node:stream';
+
+import * as Minio from 'minio';
 
 // Create a new Minio client with the S3 endpoint, access key, and secret key
 export const s3Client = new Minio.Client({

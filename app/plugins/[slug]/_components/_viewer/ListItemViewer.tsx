@@ -1,7 +1,9 @@
-import PresetItemViewer from '@/app/plugins/[slug]/_components/_viewer/PresetItemViewer';
-import CategoryItemViewer from '@/app/plugins/[slug]/_components/_viewer/CategoryItemViewer';
-import { ItemViewerType, UserPermissionsType } from '@/lib/definitions';
 import { PluginType } from '@/prisma';
+
+import CategoryItemViewer from '@/app/plugins/[slug]/_components/_viewer/CategoryItemViewer';
+import PresetItemViewer from '@/app/plugins/[slug]/_components/_viewer/PresetItemViewer';
+
+import { ItemViewerType, UserPermissionsType } from '@/lib/definitions';
 
 type ItemViewerProps = {
     item: ItemViewerType | null;

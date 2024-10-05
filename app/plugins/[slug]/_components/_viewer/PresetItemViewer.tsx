@@ -1,20 +1,25 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useFormatter } from 'next-intl';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { UserPermissionsType } from '@/lib/definitions';
-import { PluginType } from '@/prisma';
+import { useRef, useState } from 'react';
 import { useFormState } from 'react-dom';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { PluginType } from '@/prisma';
+import { Preset } from '@prisma/client';
+
 import {
     createPresetAction,
     deletePresetAction,
     updatePresetAction,
 } from '@/app/_actions/preset';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { presetFormSchema } from '@/app/_validation/preset';
-import { useRef, useState } from 'react';
-import { Preset } from '@prisma/client';
+
+import Cancel from '@/components/shared/buttons/Cancel';
+import ConfirmDelete from '@/components/shared/buttons/ConfirmDelete';
+import Edit from '@/components/shared/buttons/Edit';
+import Save from '@/components/shared/buttons/Save';
+import { Badge } from '@/components/ui/badge';
 import {
     Form,
     FormControl,
@@ -23,10 +28,9 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import Save from '@/components/shared/buttons/Save';
-import Cancel from '@/components/shared/buttons/Cancel';
-import Edit from '@/components/shared/buttons/Edit';
-import ConfirmDelete from '@/components/shared/buttons/ConfirmDelete';
+import { Textarea } from '@/components/ui/textarea';
+
+import { UserPermissionsType } from '@/lib/definitions';
 
 type PresetViewerProps = {
     presetId: number;

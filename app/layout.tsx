@@ -1,12 +1,17 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter as FontSans } from 'next/font/google';
+
 import { cn } from '@/lib/utils';
+
 import './globals.css';
-import SessionWrapper from '@/components/auth/SessionWrapper';
+
+import { config } from '@fortawesome/fontawesome-svg-core';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
+
+import SessionWrapper from '@/components/auth/SessionWrapper';
 import TopBar from '@/components/base/HeaderBar';
-import { config } from '@fortawesome/fontawesome-svg-core';
+
 import '@fortawesome/fontawesome-svg-core/styles.css';
 
 const fontSans = FontSans({

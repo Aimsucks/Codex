@@ -1,6 +1,7 @@
 import { prisma } from '@/prisma';
-import PluginCard from '@/components/home/PluginCard';
 import { Plugin, Preset } from '@prisma/client';
+
+import PluginCard from '@/components/home/PluginCard';
 
 export default async function PluginList() {
     const plugins: (Plugin & { presets: Partial<Preset>[] })[] =
