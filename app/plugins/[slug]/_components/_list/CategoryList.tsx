@@ -1,8 +1,12 @@
-import { Category, Preset } from '@prisma/client';
 import { useState } from 'react';
-import PresetListItem from '@/app/plugins/[slug]/_components/_list/PresetListItem';
+
+import { Category, Preset } from '@prisma/client';
+
 import CategoryListItem from '@/app/plugins/[slug]/_components/_list/CategoryListItem';
+import PresetListItem from '@/app/plugins/[slug]/_components/_list/PresetListItem';
+
 import Add from '@/components/shared/buttons/Add';
+
 import { ItemViewerType, UserPermissionsType } from '@/lib/definitions';
 
 type CategoryListProps = {
@@ -51,9 +55,7 @@ export default function CategoryList({
                     <Add
                         type='top-level category'
                         className='ml-auto h-10 w-10 rounded-xl bg-punish-800 hover:bg-punish-700'
-                        onClick={() =>
-                            onItemOpen({ categoryId: 0, newCategory: true })
-                        }
+                        onClick={() => onItemOpen({ categoryId: 0 })}
                     />
                 </div>
             )}

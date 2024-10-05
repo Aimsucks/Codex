@@ -1,12 +1,25 @@
-import { Preset } from '@prisma/client';
-import PresetItemViewer from '@/app/plugins/[slug]/_components/_viewer/PresetItemViewer';
-import { Separator } from '@/components/ui/separator';
-import { PluginType } from '@/prisma';
-import { ItemViewerType, UserPermissionsType } from '@/lib/definitions';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { PluginType } from '@/prisma';
+import { Preset } from '@prisma/client';
+
+import {
+    createCategoryAction,
+    deleteCategoryAction,
+    updateCategoryAction,
+} from '@/app/_actions/category';
+import { categoryFormSchema } from '@/app/_validation/category';
+import PresetItemViewer from '@/app/plugins/[slug]/_components/_viewer/PresetItemViewer';
+
 import Add from '@/components/shared/buttons/Add';
-import Edit from '@/components/shared/buttons/Edit';
+import Cancel from '@/components/shared/buttons/Cancel';
 import ConfirmDelete from '@/components/shared/buttons/ConfirmDelete';
+import Edit from '@/components/shared/buttons/Edit';
+import Save from '@/components/shared/buttons/Save';
 import {
     Form,
     FormControl,
@@ -15,18 +28,9 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import Save from '@/components/shared/buttons/Save';
-import Cancel from '@/components/shared/buttons/Cancel';
-import {
-    createCategoryAction,
-    deleteCategoryAction,
-    updateCategoryAction,
-} from '@/app/_actions/category';
-import { useFormState } from 'react-dom';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { categoryFormSchema } from '@/app/_validation/category';
+import { Separator } from '@/components/ui/separator';
+
+import { ItemViewerType, UserPermissionsType } from '@/lib/definitions';
 
 type CategoryViewerProps = {
     categoryId: number;

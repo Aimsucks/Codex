@@ -1,20 +1,20 @@
 'use server';
 
+import { auth } from '@/auth';
 import mime from 'mime';
-
 import { Session } from 'next-auth';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
-import { auth } from '@/auth';
 import { prisma } from '@/prisma';
 
 import {
     pluginPermissionsOptionSchema,
     pluginUpdateFormSchema,
 } from '@/app/_validation/plugin';
+
 import { checkUserCanEditPlugin } from '@/lib/authentication';
 import { saveFileInBucket } from '@/lib/s3-file-management';
-import { z } from 'zod';
 
 export type FormState = {
     message: string;

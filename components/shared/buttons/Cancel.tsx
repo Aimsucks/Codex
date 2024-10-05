@@ -1,4 +1,6 @@
+import { XCircle } from 'lucide-react';
 import React from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
     Tooltip,
@@ -6,7 +8,6 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { XCircle } from 'lucide-react';
 
 export default function Cancel() {
     return (

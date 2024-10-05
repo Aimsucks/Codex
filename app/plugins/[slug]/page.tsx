@@ -1,10 +1,12 @@
-import { PluginProvider } from '@/app/plugins/[slug]/_components/PluginContext';
-import PresetBrowser from '@/app/plugins/[slug]/_components/PresetBrowser';
-import Image from 'next/image';
-import { PluginType, prisma, UserType } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from 'next-auth';
+import Image from 'next/image';
+
+import { PluginType, prisma, UserType } from '@/prisma';
+
 import PluginInfo from '@/app/plugins/[slug]/_components/_info/PluginInfo';
+import { PluginProvider } from '@/app/plugins/[slug]/_components/PluginContext';
+import PresetBrowser from '@/app/plugins/[slug]/_components/PresetBrowser';
 
 type PluginPageProps = {
     params: { slug: string };

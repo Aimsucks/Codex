@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { prisma } from '@/prisma';
 import { Plugin } from '@prisma/client';
 

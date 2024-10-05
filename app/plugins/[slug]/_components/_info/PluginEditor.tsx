@@ -1,6 +1,19 @@
-import { Textarea } from '@/components/ui/textarea';
-import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SaveIcon, XCircle } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { useRef } from 'react';
+import { useFormState } from 'react-dom';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { PluginType, UserPluginType } from '@/prisma';
 import { User } from '@prisma/client';
+
+import { updatePluginAction } from '@/app/_actions/plugin';
+import { pluginUpdateFormSchema } from '@/app/_validation/plugin';
+import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
+
+import { Button } from '@/components/ui/button';
 import {
     Form,
     FormControl,
@@ -9,19 +22,9 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import MultipleSelector, { Option } from '@/components/ui/multi-select';
-import { Button } from '@/components/ui/button';
-import { SaveIcon, XCircle } from 'lucide-react';
-import { useRef } from 'react';
-import { pluginUpdateFormSchema } from '@/app/_validation/plugin';
-import { z } from 'zod';
-import { useFormState } from 'react-dom';
-import { updatePluginAction } from '@/app/_actions/plugin';
-import { useSession } from 'next-auth/react';
-import { PluginType, UserPluginType } from '@/prisma';
+import { Textarea } from '@/components/ui/textarea';
 
 type PluginEditorProps = {
     plugin: PluginType;
