@@ -1,6 +1,6 @@
 import { Textarea } from '@/components/ui/textarea';
 import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
-import { User, UserPlugin } from '@prisma/client';
+import { User } from '@prisma/client';
 import {
     Form,
     FormControl,
@@ -15,19 +15,21 @@ import { Input } from '@/components/ui/input';
 import MultipleSelector, { Option } from '@/components/ui/multi-select';
 import { Button } from '@/components/ui/button';
 import { SaveIcon, XCircle } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { pluginUpdateFormSchema } from '@/app/_validation/plugin';
 import { z } from 'zod';
 import { useFormState } from 'react-dom';
 import { updatePluginAction } from '@/app/_actions/plugin';
 import { useSession } from 'next-auth/react';
+import { PluginType, UserPluginType } from '@/prisma';
 
 type PluginEditorProps = {
-    onCancel?: () => void;
+    plugin: PluginType;
+    users: User[];
 };
 
-export default function PluginEditor({ onCancel }: PluginEditorProps) {
-    const { plugin } = usePluginContext();
+export default function PluginEditor({ plugin, users }: PluginEditorProps) {
+    const { setIsPluginEditorOpen } = usePluginContext();
     const { data: session } = useSession();
 
     const updatePluginActionWithId = updatePluginAction.bind(null, plugin.id);
@@ -35,23 +37,6 @@ export default function PluginEditor({ onCancel }: PluginEditorProps) {
     const [state, formAction] = useFormState(updatePluginActionWithId, {
         message: '',
     });
-    const [users, setUsers] = useState<User[]>([]);
-
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const response = await fetch('/api/v1/users', {});
-                if (response.ok) {
-                    const users: User[] = await response.json();
-                    setUsers(users);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchUsers().catch((error) => console.error(error));
-    }, []);
 
     const multiSelectOptions: Option[] = users
         .map((u: User) => ({
@@ -67,7 +52,7 @@ export default function PluginEditor({ onCancel }: PluginEditorProps) {
             githubLink: plugin?.githubLink || '',
             discordLink: plugin?.discordLink || '',
             approvedUsers: plugin.user
-                .map((u: UserPlugin & { user: User }) => ({
+                .map((u: UserPluginType) => ({
                     label: u.user.name,
                     value: u.user.id,
                 }))
@@ -77,8 +62,6 @@ export default function PluginEditor({ onCancel }: PluginEditorProps) {
 
     const fileRef = form.register('icon');
     const formRef = useRef<HTMLFormElement>(null);
-
-    // console.log(form.getValues('approvedUsers'));
 
     return (
         <Form {...form}>
@@ -105,9 +88,10 @@ export default function PluginEditor({ onCancel }: PluginEditorProps) {
                         formAction(formData);
                     })(evt);
                 }}
-                onReset={onCancel}
+                onReset={() => setIsPluginEditorOpen(false)}
                 className='space-y-5 rounded-2xl bg-punish-900 p-5'
             >
+                <span className='text-2xl font-bold'>Plugin Editor</span>
                 <FormField
                     control={form.control}
                     name='description'

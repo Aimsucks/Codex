@@ -3,6 +3,7 @@
 import mime from 'mime';
 
 import { Session } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 
 import { auth } from '@/auth';
 import { prisma } from '@/prisma';
@@ -152,6 +153,7 @@ export async function updatePluginAction(
     }
 
     // Revalidate data
+    revalidatePath('/plugins/[slug]', 'page');
 
     return { message: 'Plugin updated' };
 }

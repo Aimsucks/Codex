@@ -1,16 +1,13 @@
-import PluginInfo from '@/app/plugins/[slug]/_components/PluginInfo';
 import { PluginProvider } from '@/app/plugins/[slug]/_components/PluginContext';
 import PresetBrowser from '@/app/plugins/[slug]/_components/PresetBrowser';
 import Image from 'next/image';
-import { Category, Plugin, Preset, User, UserPlugin } from '@prisma/client';
-import { prisma } from '@/prisma';
+import { PluginType, prisma, UserType } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from 'next-auth';
+import PluginInfo from '@/app/plugins/[slug]/_components/_plugin-info/PluginInfo';
 
-type PluginType = Plugin & {
-    categories: Category[];
-    presets: Preset[];
-    user: (UserPlugin & { user: User })[];
+type PluginPageProps = {
+    params: { slug: string };
 };
 
 type UserPermissionsType = {
@@ -18,11 +15,7 @@ type UserPermissionsType = {
     isCurrentPluginEditor: boolean;
 };
 
-export default async function PluginPage({
-    params,
-}: {
-    params: { slug: string };
-}) {
+export default async function PluginPage({ params }: PluginPageProps) {
     const { plugin, userPermissions } = await getPluginAndUserPermissions(
         params.slug
     );
@@ -50,19 +43,22 @@ export default async function PluginPage({
     if (plugin)
         return (
             <PluginProvider plugin={plugin} userPermissions={userPermissions}>
-                <PluginInfo />
+                <PluginInfo plugin={plugin} userPermissions={userPermissions} />
                 <PresetBrowser />
             </PluginProvider>
         );
 }
 
 const getPluginAndUserPermissions = async (pluginNameOrIdRaw: string) => {
+    // Pull current session and get userId for later queries
     const session: Session | null = await auth();
     const userId = session?.user?.id;
 
+    // Parse the URL slug to a plugin ID or name
     const pluginNameOrId: number | string =
         parseInt(pluginNameOrIdRaw) || decodeURI(pluginNameOrIdRaw);
 
+    // Fetch the plugin from the database
     const plugin: PluginType | null = await prisma.plugin.findFirst({
         where:
             typeof pluginNameOrId === 'number'
@@ -77,31 +73,34 @@ const getPluginAndUserPermissions = async (pluginNameOrIdRaw: string) => {
                 where: { parentCategoryId: null },
             },
             presets: true,
-            user: {
-                where: { NOT: { userId } },
-                include: { user: true },
-            },
+            user: { include: { user: true } },
         },
     });
 
-    const user: (User & { plugins: UserPlugin[] }) | null =
-        await prisma.user.findUnique({
+    // Set user permissions
+    let userPermissions: UserPermissionsType = {
+        isAdmin: false,
+        isCurrentPluginEditor: false,
+    };
+
+    if (userId) {
+        const user: UserType | null = await prisma.user.findUnique({
             where: { id: userId || '' },
             include: { plugins: true },
         });
 
-    const userPermissions: UserPermissionsType = {
-        isAdmin: !!user?.isAdmin,
-        isCurrentPluginEditor: !!user?.plugins.filter(
+        userPermissions.isAdmin = !!user?.isAdmin;
+        userPermissions.isCurrentPluginEditor = !!user?.plugins.filter(
             (userPlugin) =>
                 userPlugin.pluginId === plugin?.id &&
                 userPlugin.userId === user?.id
-        ).length,
-    };
+        ).length;
+    }
 
     return { plugin, userPermissions };
 };
 
+// Recursively iterate through plugin preset categories
 const recursiveCategories: any = (level: number) => {
     if (level === 0) {
         return {

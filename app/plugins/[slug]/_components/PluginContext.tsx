@@ -1,13 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState } from 'react';
-import { Category, Plugin, Preset, User, UserPlugin } from '@prisma/client';
-
-type PluginType = Plugin & {
-    categories: Category[];
-    presets: Preset[];
-    user: (UserPlugin & { user: User })[];
-};
+import { Category, Preset } from '@prisma/client';
+import { PluginType } from '@/prisma';
 
 type CategoryWithRelations = Category & {
     presets?: Preset[];
@@ -17,22 +12,16 @@ type CategoryWithRelations = Category & {
 // Define the shape of the context value
 interface PluginContextType {
     // Plugin data
-    plugin: Plugin & {
-        categories: Category[];
-        presets: Preset[];
-        user: (UserPlugin & { user: User })[];
-    };
+    plugin: PluginType;
 
     userPermissions: {
         isAdmin: boolean;
         isCurrentPluginEditor: boolean;
     };
 
-    // Plugin functions
-    updatePlugin: (
-        pluginId: number,
-        updatedPluginData: Partial<Plugin & { user: UserPlugin[] }>
-    ) => Promise<Plugin & { user: UserPlugin[] }>;
+    // Plugin editor area
+    isPluginEditorOpen: boolean;
+    setIsPluginEditorOpen: (arg: boolean) => void;
 
     // Category functions
     createCategory: (newCategoryData: Partial<Category>) => Promise<Category>;
@@ -57,10 +46,11 @@ const PluginContext = createContext<PluginContextType | undefined>(undefined);
 // Hook to use the plugin context
 export const usePluginContext = () => {
     const context = useContext(PluginContext);
-    if (!context)
+    if (!context) {
         throw new Error(
             'usePluginContext must be used within a PluginProvider'
         );
+    }
     return context;
 };
 
@@ -77,50 +67,8 @@ export const PluginProvider = ({
     // State to hold plugin data so it can be updated live
     const [currentPlugin, setCurrentPlugin] = useState<PluginType>(plugin);
 
-    const updatePlugin = async (pluginId: number, updatedPluginData: any) => {
-        try {
-            let filePath = plugin.icon;
-
-            if (updatedPluginData.icon) {
-                const formData = new FormData();
-                formData.append('image', updatedPluginData.icon);
-                formData.append('plugin', plugin.id.toString());
-                const fileResponse = await fetch(`/api/v1/plugins/icon`, {
-                    method: 'POST',
-                    body: formData,
-                });
-                filePath = await fileResponse.json();
-                updatedPluginData.icon = filePath;
-            }
-
-            const response = await fetch(`/api/v1/plugins/${pluginId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedPluginData),
-            });
-
-            if (response.ok) {
-                const updatedPlugin = await response.json();
-
-                setCurrentPlugin((prevPlugin) => ({
-                    ...prevPlugin,
-                    description: updatedPlugin.description,
-                    icon: updatedPlugin.icon,
-                    githubLink: updatedPlugin.githubLink,
-                    discordLink: updatedPlugin.discordLink,
-                    user: updatedPlugin.user,
-                    categories: plugin.categories,
-                    presets: plugin.presets,
-                }));
-
-                return updatedPlugin;
-            } else {
-                console.error('Error updating plugin:', await response.text());
-            }
-        } catch (error) {
-            console.error('Error updating plugin:', error);
-        }
-    };
+    const [isPluginEditorOpen, setIsPluginEditorOpen] =
+        useState<boolean>(false);
 
     // Function to create a new category
     const createCategory = async (newCategoryData: Partial<Category>) => {
@@ -485,7 +433,10 @@ export const PluginProvider = ({
             value={{
                 plugin: currentPlugin,
                 userPermissions: userPermissions,
-                updatePlugin,
+
+                isPluginEditorOpen,
+                setIsPluginEditorOpen,
+
                 createCategory,
                 updateCategory,
                 deleteCategory,
