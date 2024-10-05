@@ -13,7 +13,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 export type PluginType = Prisma.PluginGetPayload<{
     include: {
         user: { include: { user: true } };
-        categories: true;
+        categories: { include: { presets: true; subcategories: true } };
         presets: true;
     };
 }>;

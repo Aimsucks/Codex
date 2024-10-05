@@ -42,9 +42,12 @@ export default async function PluginPage({ params }: PluginPageProps) {
 
     if (plugin)
         return (
-            <PluginProvider plugin={plugin} userPermissions={userPermissions}>
+            <PluginProvider>
                 <PluginInfo plugin={plugin} userPermissions={userPermissions} />
-                <PresetBrowser />
+                <PresetBrowser
+                    plugin={plugin}
+                    userPermissions={userPermissions}
+                />
             </PluginProvider>
         );
 }
@@ -70,7 +73,6 @@ const getPluginAndUserPermissions = async (pluginNameOrIdRaw: string) => {
                     presets: true,
                     subcategories: recursiveCategories(2),
                 },
-                where: { parentCategoryId: null },
             },
             presets: true,
             user: { include: { user: true } },

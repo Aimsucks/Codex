@@ -8,11 +8,7 @@ import {
 } from '@/components/ui/tooltip';
 import { XCircle } from 'lucide-react';
 
-interface CancelProps {
-    onClick: () => void;
-}
-
-export default function Cancel({ onClick }: CancelProps) {
+export default function Cancel() {
     return (
         <TooltipProvider>
             <Tooltip delayDuration={200}>
@@ -20,8 +16,8 @@ export default function Cancel({ onClick }: CancelProps) {
                     <Button
                         variant='ghost'
                         size='icon'
+                        type='reset'
                         className={`h-8 w-8 rounded hover:bg-punish-700`}
-                        onClick={() => onClick()}
                     >
                         <XCircle className='h-6 w-6' />
                     </Button>

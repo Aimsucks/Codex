@@ -1,7 +1,5 @@
 import { z } from 'zod'; // updatePluginAction form data _validation
 
-// updatePluginAction form data _validation
-
 const pluginIconMaximumFileSize = 1024 * 1024 * 4; // 4 MB
 const pluginIconAcceptedFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
 

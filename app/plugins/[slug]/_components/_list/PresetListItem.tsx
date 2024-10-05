@@ -1,16 +1,19 @@
 import { Preset } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
+import { ItemViewerType } from '@/lib/definitions';
+
+type PresetListItemProps = {
+    preset: Preset;
+    depth: number;
+    onItemOpen: (item: ItemViewerType) => void;
+};
 
 export default function PresetListItem({
     preset,
     depth,
     onItemOpen,
-}: {
-    preset: Preset;
-    depth: number;
-    onItemOpen: (item: Preset) => void;
-}) {
+}: PresetListItemProps) {
     return (
         // Preset bar
         <div
@@ -24,7 +27,12 @@ export default function PresetListItem({
                 variant='ghost'
                 size='icon'
                 className='ml-auto h-6 w-6 rounded'
-                onClick={() => onItemOpen(preset)}
+                onClick={() =>
+                    onItemOpen({
+                        presetId: preset.id,
+                        categoryId: preset.categoryId,
+                    })
+                }
             >
                 <ExternalLink className='h-4 w-4' />
             </Button>

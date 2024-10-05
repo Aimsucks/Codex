@@ -1,9 +1,16 @@
 import { Category, Preset } from '@prisma/client';
 import { useState } from 'react';
-import PresetListItem from '@/app/plugins/[slug]/_components/PresetListItem';
-import CategoryListItem from '@/app/plugins/[slug]/_components/CategoryListItem';
+import PresetListItem from '@/app/plugins/[slug]/_components/_list/PresetListItem';
+import CategoryListItem from '@/app/plugins/[slug]/_components/_list/CategoryListItem';
 import Add from '@/components/shared/buttons/Add';
-import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
+import { ItemViewerType, UserPermissionsType } from '@/lib/definitions';
+
+type CategoryListProps = {
+    categories: CategoryWithRelations[];
+    userPermissions: UserPermissionsType;
+    onItemOpen: (item: ItemViewerType) => void;
+    depth?: number;
+};
 
 type CategoryWithRelations = Category & {
     presets?: Preset[];
@@ -12,17 +19,10 @@ type CategoryWithRelations = Category & {
 
 export default function CategoryList({
     categories,
-    depth = 0,
+    userPermissions,
     onItemOpen,
-}: {
-    categories: CategoryWithRelations[];
-    depth?: number;
-    onItemOpen: (
-        item: Preset | (Category & { presets?: Preset[]; newCategory: boolean })
-    ) => void;
-}) {
-    const { plugin, userPermissions } = usePluginContext();
-
+    depth = 0,
+}: CategoryListProps) {
     // State to track expanded categories
     const [expandedCategories, setExpandedCategories] = useState<number[]>([]);
 
@@ -43,7 +43,7 @@ export default function CategoryList({
         // Top-level div to make the categories and presets expand horizontally and appear spaced
         <div className='flex flex-grow flex-col space-y-5'>
             {/* Display header with a button to add top level categories */}
-            {depth == 0 && userPermissions.isCurrentPluginEditor ? (
+            {depth == 0 && userPermissions.isCurrentPluginEditor && (
                 <div className='flex space-x-5'>
                     <div className='text-md flex flex-grow place-items-center rounded-xl bg-punish-800 p-2 pl-4 font-bold'>
                         Plugin Category and Preset Editor
@@ -52,18 +52,10 @@ export default function CategoryList({
                         type='top-level category'
                         className='ml-auto h-10 w-10 rounded-xl bg-punish-800 hover:bg-punish-700'
                         onClick={() =>
-                            onItemOpen({
-                                id: Date.now(),
-                                name: '',
-                                pluginId: plugin.id,
-                                parentCategoryId: null,
-                                newCategory: true,
-                            })
+                            onItemOpen({ categoryId: 0, newCategory: true })
                         }
                     />
                 </div>
-            ) : (
-                ''
             )}
 
             {/* Recursively display categories, and when they're opened, display their presets */}
@@ -81,6 +73,7 @@ export default function CategoryList({
                             isExpanded={isExpanded}
                             onClick={() => toggleCategory(category.id)}
                             onItemOpen={onItemOpen}
+                            userPermissions={userPermissions}
                         />
 
                         {/* Only display presets and subcategories if the category is expanded */}
@@ -92,8 +85,9 @@ export default function CategoryList({
                                     category.subcategories.length > 0 && (
                                         <CategoryList
                                             categories={category.subcategories}
-                                            depth={depth + 1}
+                                            userPermissions={userPermissions}
                                             onItemOpen={onItemOpen}
+                                            depth={depth + 1}
                                         />
                                     )}
 

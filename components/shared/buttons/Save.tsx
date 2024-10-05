@@ -8,11 +8,7 @@ import {
 } from '@/components/ui/tooltip';
 import { SaveIcon } from 'lucide-react';
 
-interface SaveProps {
-    onClick: () => void;
-}
-
-export default function Save({ onClick }: SaveProps) {
+export default function Save() {
     return (
         <TooltipProvider>
             <Tooltip delayDuration={200}>
@@ -21,7 +17,7 @@ export default function Save({ onClick }: SaveProps) {
                         variant='ghost'
                         size='icon'
                         className={`h-8 w-8 rounded hover:bg-punish-700`}
-                        onClick={() => onClick()}
+                        type='submit'
                     >
                         <SaveIcon className='h-6 w-6' />
                     </Button>

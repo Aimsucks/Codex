@@ -2,6 +2,8 @@
 
 ## Short-term
 
+- Add pending/loading to the plugin editing form
+- Try to change the structure for configuration/preset list and viewer to pass props from `page.tsx`
 - Add form validation for preset saving, maybe convert it into an actual form.
 - Follow the advice from the top comment
   here: https://www.reddit.com/r/nextjs/comments/1ciqr9g/how_do_i_update_state_at_the_same_time_as_using/

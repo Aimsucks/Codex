@@ -32,12 +32,15 @@ export default function PluginEditor({ plugin, users }: PluginEditorProps) {
     const { setIsPluginEditorOpen } = usePluginContext();
     const { data: session } = useSession();
 
+    // Bind the plugin ID to the action so it gets sent when called
     const updatePluginActionWithId = updatePluginAction.bind(null, plugin.id);
 
+    // Use form state to display a message when there are server-side errors with form submission
     const [state, formAction] = useFormState(updatePluginActionWithId, {
         message: '',
     });
 
+    // Generate a list of multi-select options from the provided user list
     const multiSelectOptions: Option[] = users
         .map((u: User) => ({
             label: u.name,
@@ -45,6 +48,7 @@ export default function PluginEditor({ plugin, users }: PluginEditorProps) {
         }))
         .filter((u) => u.value !== session?.user?.id);
 
+    // Instantiate the form
     const form = useForm<z.output<typeof pluginUpdateFormSchema>>({
         resolver: zodResolver(pluginUpdateFormSchema),
         defaultValues: {

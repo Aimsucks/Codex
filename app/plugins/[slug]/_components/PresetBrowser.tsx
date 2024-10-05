@@ -1,32 +1,22 @@
 'use client';
 
-import CategoryList from '@/app/plugins/[slug]/_components/CategoryList';
-import ListItemViewer from '@/app/plugins/[slug]/_components/ListItemViewer';
-import { Category, Preset } from '@prisma/client';
+import CategoryList from '@/app/plugins/[slug]/_components/_list/CategoryList';
+import ListItemViewer from '@/app/plugins/[slug]/_components/_viewer/ListItemViewer';
 import { useState } from 'react';
-import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
+import { PluginType } from '@/prisma';
+import { ItemViewerType, UserPermissionsType } from '@/lib/definitions';
 
-export default function PresetBrowser() {
+type PresetBrowserProps = {
+    plugin: PluginType;
+    userPermissions: UserPermissionsType;
+};
+
+export default function PresetBrowser({
+    plugin,
+    userPermissions,
+}: PresetBrowserProps) {
     // State to track opened categories
-    const [openedItem, setOpenedItem] = useState<
-        | Preset
-        | (Category & { presets?: Preset[]; newCategory: boolean })
-        | null
-    >(null);
-
-    // Get plugin details from context
-    const { plugin } = usePluginContext();
-
-    const categories = plugin.categories;
-
-    // Handler for opening and closing categories
-    const handleItemOpen = (
-        item:
-            | Preset
-            | ((Category & { presets?: Preset[]; newCategory: boolean }) | null)
-    ) => {
-        setOpenedItem(item);
-    };
+    const [openedItem, setOpenedItem] = useState<ItemViewerType | null>(null);
 
     return (
         <>
@@ -34,12 +24,20 @@ export default function PresetBrowser() {
             <div className='mt-5 flex h-full space-x-5 rounded-2xl bg-punish-900 p-5'>
                 {/* Left-side category and preset browser */}
                 <CategoryList
-                    categories={categories}
-                    onItemOpen={handleItemOpen}
+                    categories={plugin.categories.filter(
+                        (category) => category.parentCategoryId === null
+                    )}
+                    userPermissions={userPermissions}
+                    onItemOpen={(item) => setOpenedItem(item)}
                 />
 
                 {/* Right-side category and preset viewer */}
-                <ListItemViewer item={openedItem} onItemOpen={handleItemOpen} />
+                <ListItemViewer
+                    item={openedItem}
+                    plugin={plugin}
+                    userPermissions={userPermissions}
+                    onItemOpen={(item) => setOpenedItem(item)}
+                />
             </div>
         </>
     );

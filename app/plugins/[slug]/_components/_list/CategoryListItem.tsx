@@ -2,16 +2,15 @@ import { Category, Preset } from '@prisma/client';
 import { ChevronUp, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Add from '@/components/shared/buttons/Add';
-import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
+import { ItemViewerType, UserPermissionsType } from '@/lib/definitions';
 
 type CategoryProps = {
     category: Category & { presets?: Preset[] };
     depth: number;
     onClick: () => void;
     isExpanded: boolean;
-    onItemOpen: (
-        item: Preset | (Category & { presets?: Preset[]; newCategory: boolean })
-    ) => void;
+    onItemOpen: (item: ItemViewerType) => void;
+    userPermissions: UserPermissionsType;
 };
 
 export default function CategoryListItem({
@@ -20,9 +19,8 @@ export default function CategoryListItem({
     isExpanded,
     onClick,
     onItemOpen,
+    userPermissions,
 }: CategoryProps) {
-    const { userPermissions } = usePluginContext();
-
     return (
         <div className='flex place-items-center space-x-5'>
             {/* Category bar, which is clickable element and will expand it to show subcategories and presets */}
@@ -45,7 +43,7 @@ export default function CategoryListItem({
                     className='ml-auto h-6 w-6 rounded'
                     onClick={(e) => {
                         e.stopPropagation();
-                        onItemOpen({ ...category, newCategory: false });
+                        onItemOpen({ categoryId: category.id });
                     }}
                 >
                     <ExternalLink className='h-4 w-4' />
@@ -60,11 +58,8 @@ export default function CategoryListItem({
                         className='h-10 w-10 rounded-xl bg-slate-700 hover:bg-slate-600'
                         onClick={() =>
                             onItemOpen({
-                                id: Date.now(),
-                                name: '',
-                                pluginId: category.pluginId,
+                                categoryId: 0,
                                 parentCategoryId: category.id,
-                                newCategory: true,
                             })
                         }
                     />

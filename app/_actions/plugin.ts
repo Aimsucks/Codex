@@ -55,10 +55,8 @@ export async function updatePluginAction(
         discordLink: data.get('discordLink'),
         approvedUsers: approvedUsers,
     });
-
-    if (!validatedFormData.success) {
+    if (!validatedFormData.success)
         return { error: true, message: 'Invalid form submission' };
-    }
 
     // Upload image to S3 if an icon was submitted
     let pluginIconUrl = undefined;
@@ -147,9 +145,9 @@ export async function updatePluginAction(
                 }),
             },
         });
-    } catch (e) {
-        console.error(e);
-        return { error: true, message: 'Error uploading plugin in database' };
+    } catch (error) {
+        console.error(error);
+        return { error: true, message: 'Error updating plugin in database' };
     }
 
     // Revalidate data
