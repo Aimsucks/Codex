@@ -1,9 +1,9 @@
 import React from 'react';
 import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
 import { PluginType } from '@/prisma';
-import PluginButton from '@/app/plugins/[slug]/_components/_plugin-info/PluginButton';
+import PluginButton from '@/app/plugins/[slug]/_components/_info/PluginButton';
 import { UserPermissionsType } from '@/lib/definitions';
-import PluginEditButton from '@/app/plugins/[slug]/_components/_plugin-info/PluginEditButton';
+import PluginEditButton from '@/app/plugins/[slug]/_components/_info/PluginEditButton';
 
 type PluginButtonRowProps = {
     plugin: PluginType;

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { PluginType, prisma, UserType } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from 'next-auth';
-import PluginInfo from '@/app/plugins/[slug]/_components/_plugin-info/PluginInfo';
+import PluginInfo from '@/app/plugins/[slug]/_components/_info/PluginInfo';
 
 type PluginPageProps = {
     params: { slug: string };

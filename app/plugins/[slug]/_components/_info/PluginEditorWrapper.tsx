@@ -1,6 +1,6 @@
 'use client';
 
-import PluginEditor from '@/app/plugins/[slug]/_components/_plugin-info/PluginEditor';
+import PluginEditor from '@/app/plugins/[slug]/_components/_info/PluginEditor';
 import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
 import { PluginType } from '@/prisma';
 import { User } from '@prisma/client';

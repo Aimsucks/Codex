@@ -1,6 +1,6 @@
 'use client';
 
-import PluginButton from '@/app/plugins/[slug]/_components/_plugin-info/PluginButton';
+import PluginButton from '@/app/plugins/[slug]/_components/_info/PluginButton';
 import { usePluginContext } from '@/app/plugins/[slug]/_components/PluginContext';
 import { faEdit } from '@fortawesome/free-regular-svg-icons';
 

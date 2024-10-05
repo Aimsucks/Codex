@@ -2,9 +2,9 @@ import Image from 'next/image';
 import { BookText, Clock, Sparkles } from 'lucide-react';
 import { PluginType, prisma } from '@/prisma';
 import { UserPermissionsType } from '@/lib/definitions';
-import PluginFact from '@/app/plugins/[slug]/_components/_plugin-info/PluginFact';
-import PluginButtonRow from '@/app/plugins/[slug]/_components/_plugin-info/PluginButtonRow';
-import PluginEditorWrapper from '@/app/plugins/[slug]/_components/_plugin-info/PluginEditorWrapper';
+import PluginFact from '@/app/plugins/[slug]/_components/_info/PluginFact';
+import PluginButtonRow from '@/app/plugins/[slug]/_components/_info/PluginButtonRow';
+import PluginEditorWrapper from '@/app/plugins/[slug]/_components/_info/PluginEditorWrapper';
 import { getFormatter } from 'next-intl/server';
 import { User } from '@prisma/client';
 
